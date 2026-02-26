@@ -57,7 +57,7 @@ Plus an **Appendix** with slash commands quick reference and an **About the Auth
 
 The ebook is hosted as a single-page web application on GitHub Pages:
 
-**👉 [https://YOUR_USERNAME.github.io/spec-kit-ebook/](https://YOUR_USERNAME.github.io/spec-kit-ebook/)**
+**👉 [https://tanure.github.io/spec-kit-ebook/](https://tanure.github.io/spec-kit-ebook/)**
 
 Features of the web version:
 - Dark editorial design with scroll animations
