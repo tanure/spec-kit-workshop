@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spec-Driven Development with GitHub Spec Kit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400;500;700&family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0c10;
+  --bg-surface: #0d1117;
+  --bg-elevated: #161b22;
+  --bg-overlay: #1c2128;
+  --border: #30363d;
+  --border-subtle: #21262d;
+  --text-primary: #e6edf3;
+  --text-secondary: #8b949e;
+  --text-muted: #484f58;
+  --accent-blue: #58a6ff;
+  --accent-blue-dim: #1f6feb;
+  --accent-purple: #bc8cff;
+  --accent-purple-dim: #8b5cf6;
+  --accent-green: #3fb950;
+  --accent-green-dim: #238636;
+  --accent-orange: #d29922;
+  --accent-red: #f85149;
+  --accent-pink: #f778ba;
+  --accent-cyan: #39d2c0;
+  --font-display: 'DM Serif Display', serif;
+  --font-editorial: 'Fraunces', serif;
+  --font-body: 'Instrument Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; scrollbar-width: thin; scrollbar-color: var(--border) var(--bg); }
+body { 
+  font-family: var(--font-body); 
+  background: var(--bg); 
+  color: var(--text-primary); 
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+::selection { background: var(--accent-purple-dim); color: white; }
+
+/* ── NAV ── */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(10, 12, 16, 0.85);
+  backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 0 2rem;
+  height: 56px;
+  display: flex; align-items: center; justify-content: space-between;
+  transition: transform 0.4s var(--ease-out-expo);
+}
+.nav.hidden { transform: translateY(-100%); }
+.nav-logo { 
+  font-family: var(--font-mono); font-size: 0.8rem; font-weight: 700;
+  color: var(--accent-blue); letter-spacing: -0.02em;
+  display: flex; align-items: center; gap: 0.5rem;
+}
+.nav-logo span { color: var(--text-muted); font-weight: 400; }
+.nav-links { display: flex; gap: 0.25rem; }
+.nav-links a {
+  color: var(--text-secondary); text-decoration: none; font-size: 0.78rem;
+  padding: 0.4rem 0.75rem; border-radius: 6px; transition: all 0.2s;
+  font-weight: 500;
+}
+.nav-links a:hover { color: var(--text-primary); background: var(--bg-elevated); }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+  padding: 6rem 2rem 4rem;
+}
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image: 
+    linear-gradient(rgba(88, 166, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(88, 166, 255, 0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+.hero-glow {
+  position: absolute; width: 600px; height: 600px; border-radius: 50%;
+  filter: blur(150px); opacity: 0.15; pointer-events: none;
+}
+.hero-glow-1 { background: var(--accent-blue); top: -200px; right: -100px; }
+.hero-glow-2 { background: var(--accent-purple); bottom: -200px; left: -100px; }
+.hero-content { 
+  max-width: 800px; text-align: center; position: relative; z-index: 2;
+  animation: fadeUp 1s var(--ease-out-expo) both;
+}
+@keyframes fadeUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  background: var(--bg-elevated); border: 1px solid var(--border);
+  padding: 0.4rem 1rem; border-radius: 100px; font-size: 0.78rem;
+  color: var(--text-secondary); margin-bottom: 2rem;
+  animation: fadeUp 1s 0.1s var(--ease-out-expo) both;
+}
+.hero-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent-green); animation: pulse 2s infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+.hero h1 { 
+  font-family: var(--font-display); font-size: clamp(2.8rem, 6vw, 4.5rem); 
+  line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 1.5rem;
+  animation: fadeUp 1s 0.2s var(--ease-out-expo) both;
+}
+.hero h1 em { font-family: var(--font-editorial); color: var(--accent-blue); font-style: italic; }
+
+.hero-sub { 
+  font-size: 1.15rem; color: var(--text-secondary); max-width: 600px; margin: 0 auto 2.5rem;
+  line-height: 1.65;
+  animation: fadeUp 1s 0.3s var(--ease-out-expo) both;
+}
+.hero-pills {
+  display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center;
+  animation: fadeUp 1s 0.4s var(--ease-out-expo) both;
+}
+.pill {
+  background: var(--bg-elevated); border: 1px solid var(--border);
+  padding: 0.45rem 1rem; border-radius: 8px; font-size: 0.82rem;
+  color: var(--text-secondary); display: flex; align-items: center; gap: 0.4rem;
+}
+.pill svg { width: 16px; height: 16px; }
+
+/* ── SECTION LAYOUT ── */
+.section { padding: 6rem 2rem; max-width: 900px; margin: 0 auto; }
+.section-wide { max-width: 1100px; }
+
+.chapter-header { 
+  margin-bottom: 3.5rem; padding-bottom: 2rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.chapter-label {
+  font-family: var(--font-mono); font-size: 0.72rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.15em;
+  margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.75rem;
+}
+.chapter-label::before { 
+  content: ''; width: 24px; height: 2px; display: block;
+}
+.chapter-label[data-color="blue"] { color: var(--accent-blue); }
+.chapter-label[data-color="blue"]::before { background: var(--accent-blue); }
+.chapter-label[data-color="purple"] { color: var(--accent-purple); }
+.chapter-label[data-color="purple"]::before { background: var(--accent-purple); }
+.chapter-label[data-color="green"] { color: var(--accent-green); }
+.chapter-label[data-color="green"]::before { background: var(--accent-green); }
+.chapter-label[data-color="orange"] { color: var(--accent-orange); }
+.chapter-label[data-color="orange"]::before { background: var(--accent-orange); }
+.chapter-label[data-color="red"] { color: var(--accent-red); }
+.chapter-label[data-color="red"]::before { background: var(--accent-red); }
+.chapter-label[data-color="cyan"] { color: var(--accent-cyan); }
+.chapter-label[data-color="cyan"]::before { background: var(--accent-cyan); }
+.chapter-label[data-color="pink"] { color: var(--accent-pink); }
+.chapter-label[data-color="pink"]::before { background: var(--accent-pink); }
+
+.chapter-header h2 {
+  font-family: var(--font-display); font-size: clamp(2rem, 4vw, 2.8rem);
+  line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 0.75rem;
+}
+.chapter-header p { color: var(--text-secondary); font-size: 1.05rem; max-width: 650px; }
+
+h3 { 
+  font-family: var(--font-display); font-size: 1.5rem; letter-spacing: -0.01em;
+  margin: 2.5rem 0 1rem; line-height: 1.3;
+}
+h4 { font-size: 1.05rem; font-weight: 600; margin: 1.5rem 0 0.5rem; }
+
+p { margin-bottom: 1.25rem; color: var(--text-secondary); }
+p strong, li strong { color: var(--text-primary); font-weight: 600; }
+a { color: var(--accent-blue); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ── CARDS ── */
+.card {
+  background: var(--bg-surface); border: 1px solid var(--border-subtle);
+  border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem;
+  transition: border-color 0.3s, transform 0.3s var(--ease-out-expo);
+}
+.card:hover { border-color: var(--border); transform: translateY(-2px); }
+
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
+
+.card-icon {
+  width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem; margin-bottom: 0.75rem; font-weight: 700;
+}
+.card h4 { margin: 0 0 0.4rem; }
+.card p { font-size: 0.9rem; margin: 0; }
+
+/* ── CALLOUT BOXES ── */
+.callout {
+  border-radius: 10px; padding: 1.25rem 1.25rem 1.25rem 1.5rem;
+  margin: 1.5rem 0; position: relative;
+  border-left: 3px solid;
+}
+.callout-title { font-weight: 700; font-size: 0.85rem; margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.5rem; }
+.callout p { font-size: 0.9rem; margin: 0; }
+.callout.tip { background: rgba(63, 185, 80, 0.06); border-color: var(--accent-green); }
+.callout.tip .callout-title { color: var(--accent-green); }
+.callout.warn { background: rgba(210, 153, 34, 0.06); border-color: var(--accent-orange); }
+.callout.warn .callout-title { color: var(--accent-orange); }
+.callout.info { background: rgba(88, 166, 255, 0.06); border-color: var(--accent-blue); }
+.callout.info .callout-title { color: var(--accent-blue); }
+.callout.danger { background: rgba(248, 81, 73, 0.06); border-color: var(--accent-red); }
+.callout.danger .callout-title { color: var(--accent-red); }
+
+/* ── CODE BLOCKS ── */
+.code-block {
+  background: var(--bg-surface); border: 1px solid var(--border-subtle);
+  border-radius: 10px; overflow: hidden; margin: 1.5rem 0;
+}
+.code-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.6rem 1rem; background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border-subtle);
+}
+.code-dots { display: flex; gap: 6px; }
+.code-dots span { width: 10px; height: 10px; border-radius: 50%; }
+.code-dots span:nth-child(1) { background: #ff5f56; }
+.code-dots span:nth-child(2) { background: #ffbd2e; }
+.code-dots span:nth-child(3) { background: #27c93f; }
+.code-title { font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted); }
+.code-body {
+  padding: 1.25rem; font-family: var(--font-mono); font-size: 0.82rem;
+  line-height: 1.8; overflow-x: auto; white-space: pre;
+  color: var(--text-secondary);
+}
+.code-body .cm { color: var(--text-muted); }
+.code-body .cmd { color: var(--accent-cyan); font-weight: 500; }
+.code-body .str { color: var(--accent-green); }
+.code-body .flag { color: var(--accent-orange); }
+.code-body .kw { color: var(--accent-purple); }
+.code-body .fn { color: var(--accent-blue); }
+.code-body .num { color: var(--accent-pink); }
+
+/* ── FLOW DIAGRAMS ── */
+.flow {
+  display: flex; flex-wrap: wrap; gap: 0; align-items: stretch; justify-content: center;
+  margin: 2rem 0;
+}
+.flow-step {
+  flex: 1 1 120px; max-width: 160px; text-align: center; padding: 1rem 0.5rem;
+  position: relative;
+}
+.flow-step::after {
+  content: '→'; position: absolute; right: -10px; top: 50%; transform: translateY(-50%);
+  color: var(--text-muted); font-size: 1.2rem;
+}
+.flow-step:last-child::after { display: none; }
+.flow-num {
+  width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); font-weight: 700; font-size: 0.82rem;
+  margin: 0 auto 0.5rem; color: white;
+}
+.flow-step h5 { font-size: 0.82rem; font-weight: 700; margin-bottom: 0.25rem; }
+.flow-step p { font-size: 0.7rem; color: var(--text-muted); margin: 0; line-height: 1.4; }
+
+/* ── COMPARISON ── */
+.compare { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 2rem 0; }
+.compare-col { border-radius: 12px; padding: 1.5rem; }
+.compare-col.bad { background: rgba(248, 81, 73, 0.05); border: 1px solid rgba(248, 81, 73, 0.15); }
+.compare-col.good { background: rgba(63, 185, 80, 0.05); border: 1px solid rgba(63, 185, 80, 0.15); }
+.compare-col h4 { font-size: 0.95rem; margin: 0 0 0.75rem; display: flex; align-items: center; gap: 0.5rem; }
+.compare-col.bad h4 { color: var(--accent-red); }
+.compare-col.good h4 { color: var(--accent-green); }
+.compare-col ul { list-style: none; padding: 0; }
+.compare-col li { font-size: 0.88rem; color: var(--text-secondary); padding: 0.3rem 0; display: flex; align-items: flex-start; gap: 0.5rem; }
+.compare-col li::before { flex-shrink: 0; font-weight: 700; margin-top: 0.1rem; }
+.compare-col.bad li::before { content: '✕'; color: var(--accent-red); }
+.compare-col.good li::before { content: '✓'; color: var(--accent-green); }
+
+/* ── STEP LIST ── */
+.steps { counter-reset: step; margin: 1.5rem 0; }
+.step-item {
+  display: grid; grid-template-columns: 48px 1fr; gap: 1rem;
+  padding: 1.25rem 0; border-bottom: 1px solid var(--border-subtle);
+  counter-increment: step;
+}
+.step-item:last-child { border-bottom: none; }
+.step-num {
+  width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); font-weight: 700; font-size: 0.9rem; color: white;
+  flex-shrink: 0;
+}
+.step-item h4 { margin: 0 0 0.3rem; font-size: 1.05rem; }
+.step-item p { font-size: 0.9rem; margin: 0 0 0.5rem; }
+
+/* ── METRIC BAR ── */
+.metric-row { display: flex; align-items: center; gap: 1rem; margin: 0.75rem 0; }
+.metric-label { width: 180px; font-size: 0.82rem; color: var(--text-secondary); flex-shrink: 0; text-align: right; }
+.metric-bar { flex: 1; height: 28px; background: var(--bg-elevated); border-radius: 6px; overflow: hidden; position: relative; }
+.metric-fill { height: 100%; border-radius: 6px; display: flex; align-items: center; padding-left: 0.75rem; font-family: var(--font-mono); font-size: 0.72rem; font-weight: 600; color: white; transition: width 1.5s var(--ease-out-expo); }
+
+/* ── DIVIDER ── */
+.divider { 
+  height: 1px; background: var(--border-subtle); margin: 4rem 0;
+  max-width: 900px; margin-left: auto; margin-right: auto;
+}
+
+/* ── PROJECT BLUEPRINT ── */
+.blueprint {
+  background: linear-gradient(135deg, rgba(88, 166, 255, 0.04), rgba(188, 140, 255, 0.04));
+  border: 1px solid var(--border); border-radius: 16px;
+  padding: 2rem; margin: 2rem 0;
+}
+.blueprint-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem; }
+.blueprint-icon {
+  width: 50px; height: 50px; border-radius: 14px; display: flex; align-items: center; justify-content: center;
+  font-size: 1.5rem; background: linear-gradient(135deg, var(--accent-blue-dim), var(--accent-purple-dim));
+}
+.blueprint-header h3 { margin: 0; font-size: 1.3rem; }
+.blueprint-header p { margin: 0; font-size: 0.85rem; color: var(--text-muted); }
+.blueprint-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.75rem; }
+.blueprint-item {
+  display: flex; align-items: center; gap: 0.5rem; font-size: 0.88rem; color: var(--text-secondary);
+  padding: 0.5rem 0.75rem; background: var(--bg-surface); border-radius: 8px;
+}
+.blueprint-item span { font-weight: 600; color: var(--text-primary); }
+
+/* ── PROMPT BLOCK ── */
+.prompt-block {
+  background: var(--bg-surface); border: 1px solid var(--border-subtle);
+  border-radius: 12px; overflow: hidden; margin: 1.5rem 0;
+}
+.prompt-label {
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: 0.75rem 1.25rem; border-bottom: 1px solid var(--border-subtle);
+  font-family: var(--font-mono); font-size: 0.72rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.1em;
+}
+.prompt-body {
+  padding: 1.25rem; font-size: 0.92rem; line-height: 1.75;
+  color: var(--text-secondary);
+}
+.prompt-body strong { color: var(--text-primary); }
+.prompt-cmd {
+  font-family: var(--font-mono); font-weight: 700; font-size: 0.95rem;
+  display: block; margin-bottom: 0.75rem; padding-bottom: 0.5rem;
+  border-bottom: 1px dashed var(--border-subtle);
+}
+
+/* ── FEATURE GRID ── */
+.feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.25rem; margin: 2rem 0; }
+.feature-card {
+  background: var(--bg-surface); border: 1px solid var(--border-subtle);
+  border-radius: 12px; padding: 1.5rem;
+  transition: border-color 0.3s, transform 0.3s var(--ease-out-expo);
+}
+.feature-card:hover { border-color: var(--border); transform: translateY(-3px); }
+.feature-emoji { font-size: 1.8rem; margin-bottom: 0.75rem; }
+.feature-card h4 { margin: 0 0 0.35rem; font-size: 1rem; }
+.feature-card p { margin: 0; font-size: 0.85rem; }
+.feature-card ul { list-style: none; padding: 0; margin: 0.5rem 0 0; }
+.feature-card li { font-size: 0.82rem; color: var(--text-muted); padding: 0.15rem 0; }
+.feature-card li::before { content: '→ '; color: var(--accent-blue); }
+
+/* ── TOC ── */
+.toc { 
+  background: var(--bg-surface); border: 1px solid var(--border-subtle);
+  border-radius: 16px; padding: 2.5rem; margin: 3rem auto; max-width: 700px;
+}
+.toc h3 { margin: 0 0 1.5rem; text-align: center; }
+.toc-list { list-style: none; padding: 0; }
+.toc-list li { border-bottom: 1px solid var(--border-subtle); }
+.toc-list li:last-child { border-bottom: none; }
+.toc-list a {
+  display: flex; align-items: center; gap: 1rem; padding: 0.9rem 0;
+  text-decoration: none; transition: all 0.2s;
+}
+.toc-list a:hover { padding-left: 0.5rem; }
+.toc-num {
+  width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); font-weight: 700; font-size: 0.78rem; color: white; flex-shrink: 0;
+}
+.toc-text { flex: 1; }
+.toc-text strong { display: block; font-size: 0.95rem; color: var(--text-primary); }
+.toc-text span { font-size: 0.78rem; color: var(--text-muted); }
+
+/* ── FOOTER ── */
+.footer {
+  border-top: 1px solid var(--border-subtle); padding: 4rem 2rem;
+  text-align: center; color: var(--text-muted); font-size: 0.85rem;
+}
+.footer a { color: var(--accent-blue); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .compare { grid-template-columns: 1fr; }
+  .flow-step::after { display: none; }
+  .flow { gap: 0.5rem; }
+  .metric-label { width: 120px; font-size: 0.72rem; }
+  .section { padding: 3rem 1.25rem; }
+}
+
+/* ── SCROLL ANIMATIONS ── */
+.reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.8s var(--ease-out-expo), transform 0.8s var(--ease-out-expo); }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- ═══════════ NAV ═══════════ -->
+<nav class="nav" id="nav">
+  <div class="nav-logo">speckit <span>/ ebook</span></div>
+  <div class="nav-links">
+    <a href="#toc">Contents</a>
+    <a href="#ch1">Why SDD</a>
+    <a href="#ch3">Spec Kit</a>
+    <a href="#ch5">Workflow</a>
+    <a href="#ch7">HabitTracker</a>
+  </div>
+</nav>
+
+<!-- ═══════════ HERO ═══════════ -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow hero-glow-1"></div>
+  <div class="hero-glow hero-glow-2"></div>
+  <div class="hero-content">
+    <div class="hero-badge"><span class="dot"></span> Open Source — 68k+ Stars on GitHub</div>
+    <h1>Spec-Driven<br>Development<br>with <em>Spec Kit</em></h1>
+    <p class="hero-sub">Stop vibe coding. Start building software that works. The complete beginner's guide to structured AI development — from first install to a finished HabitTracker app.</p>
+    <div class="hero-pills">
+      <div class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.4 16.6L4.8 12l4.6-4.6m5.2 0l4.6 4.6-4.6 4.6"/></svg> VS Code + Copilot</div>
+      <div class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg> Hands-On Project</div>
+      <div class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> Beginner Friendly</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ TOC ═══════════ -->
+<div id="toc" class="section">
+  <div class="toc reveal">
+    <h3>Contents</h3>
+    <ol class="toc-list">
+      <li><a href="#ch1"><span class="toc-num" style="background:var(--accent-red)">01</span><span class="toc-text"><strong>The Problem with Vibe Coding</strong><span>Why unstructured AI coding wastes tokens and produces broken software</span></span></a></li>
+      <li><a href="#ch2"><span class="toc-num" style="background:var(--accent-purple-dim)">02</span><span class="toc-text"><strong>What is Spec-Driven Development?</strong><span>The philosophy of specifications-first AI-assisted development</span></span></a></li>
+      <li><a href="#ch3"><span class="toc-num" style="background:var(--accent-green-dim)">03</span><span class="toc-text"><strong>Introducing GitHub Spec Kit</strong><span>The open-source toolkit, its commands, and project structure</span></span></a></li>
+      <li><a href="#ch4"><span class="toc-num" style="background:var(--accent-orange)">04</span><span class="toc-text"><strong>Setting Up Your Environment</strong><span>Installing VS Code, Copilot, and Spec Kit step by step</span></span></a></li>
+      <li><a href="#ch5"><span class="toc-num" style="background:var(--accent-blue-dim)">05</span><span class="toc-text"><strong>The SDD Workflow Deep Dive</strong><span>Constitution → Specify → Plan → Tasks → Implement explained</span></span></a></li>
+      <li><a href="#ch6"><span class="toc-num" style="background:var(--accent-pink)">06</span><span class="toc-text"><strong>Token Optimization & Best Practices</strong><span>Save money and get better AI output with structured specs</span></span></a></li>
+      <li><a href="#ch7"><span class="toc-num" style="background:var(--accent-cyan)">07</span><span class="toc-text"><strong>Project: Build a HabitTracker</strong><span>Complete walkthrough — every prompt, every command, every decision</span></span></a></li>
+    </ol>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══════════ CHAPTER 1 ═══════════ -->
+<section id="ch1" class="section">
+  <div class="chapter-header reveal">
+    <div class="chapter-label" data-color="red">Chapter 01</div>
+    <h2>The Problem with Vibe Coding</h2>
+    <p>Why unstructured AI coding leads to wasted tokens, broken apps, and frustrated developers.</p>
+  </div>
+
+  <div class="reveal">
+    <p>AI coding assistants have transformed software development. Tools like GitHub Copilot can generate entire functions, suggest algorithms, and build full applications from natural language. But there's a growing problem that developers experience daily.</p>
+    <p>When you sit down with an AI assistant and start giving it instructions without a clear plan, you're <strong>vibe coding</strong> — throwing vague prompts at an AI and accepting whatever it produces. At first it feels magical. But as projects grow, things fall apart fast.</p>
+  </div>
+
+  <h3 class="reveal">The Vibe Coding Trap</h3>
+  <p class="reveal">Picture this: You're two hours into a coding session. You've given 15 different instructions. The AI built something that looked perfect 45 minutes ago. Then you realize it's <strong>completely wrong</strong>. The AI lost context, contradicted earlier decisions, and built something that doesn't match your original vision. Now you're burning tokens trying to fix it.</p>
+
+  <div class="compare reveal">
+    <div class="compare-col bad">
+      <h4>✕ Vibe Coding</h4>
+      <ul>
+        <li>Random, ad-hoc prompts</li>
+        <li>No persistent project context</li>
+        <li>Contradictory AI outputs</li>
+        <li>Massive token waste on re-explanation</li>
+        <li>No quality gates or validation</li>
+        <li>Zero traceability from intent to code</li>
+      </ul>
+    </div>
+    <div class="compare-col good">
+      <h4>✓ Spec-Driven Development</h4>
+      <ul>
+        <li>Structured, purposeful specifications</li>
+        <li>Persistent context the AI always references</li>
+        <li>Consistent, aligned output every time</li>
+        <li>Optimized tokens — say it once, use it always</li>
+        <li>Built-in analysis and consistency checks</li>
+        <li>Full audit trail from spec to implementation</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout info reveal">
+    <div class="callout-title">💡 The Core Insight</div>
+    <p>The problem isn't AI — it's <strong>how we communicate with AI</strong>. Spec-Driven Development gives your AI the structured context it needs to build exactly what you want, without re-explaining everything on every prompt.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════ CHAPTER 2 ═══════════ -->
+<section id="ch2" class="section">
+  <div class="chapter-header reveal">
+    <div class="chapter-label" data-color="purple">Chapter 02</div>
+    <h2>What is Spec-Driven Development?</h2>
+    <p>Specifications become executable, directly generating working implementations rather than just guiding them.</p>
+  </div>
+
+  <div class="reveal">
+    <p>Spec-Driven Development (SDD) flips the script on traditional software development. For decades, code was king — specifications were scaffolding we discarded once the "real work" began. <strong>SDD changes this: specifications become the source of truth</strong>, directly driving AI-generated implementations.</p>
+    <p>Think of it as giving your AI assistant a detailed blueprint instead of shouting instructions from across a noisy room. The blueprint stays consistent, complete, and always available.</p>
+  </div>
+
+  <h3 class="reveal">The Four Pillars of SDD</h3>
+  <div class="card-grid reveal">
+    <div class="card">
+      <div class="card-icon" style="background:rgba(188,140,255,0.12); color:var(--accent-purple)">1</div>
+      <h4>Intent First, Code Second</h4>
+      <p>Define <em>what</em> you're building and <em>why</em> before thinking about <em>how</em>. This ensures your AI understands the goal, not just the task.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon" style="background:rgba(88,166,255,0.12); color:var(--accent-blue)">2</div>
+      <h4>Specs as Source of Truth</h4>
+      <p>Your spec files are the primary artifacts. Code is generated FROM specifications. When specs change, implementations follow.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon" style="background:rgba(63,185,80,0.12); color:var(--accent-green)">3</div>
+      <h4>Structured Communication</h4>
+      <p>Instead of ad-hoc prompts, SDD provides a standardized language for communicating with AI agents. Every interaction builds on shared understanding.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon" style="background:rgba(210,153,34,0.12); color:var(--accent-orange)">4</div>
+      <h4>Progressive Refinement</h4>
+      <p>Start high-level and add detail incrementally. Each phase adds specificity, reducing ambiguity at every step.</p>
+    </div>
+  </div>
+
+  <h3 class="reveal">The SDD Workflow at a Glance</h3>
+  <div class="flow reveal">
+    <div class="flow-step">
+      <div class="flow-num" style="background:var(--accent-blue-dim)">1</div>
+      <h5>Constitution</h5>
+      <p>Project principles & rules</p>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num" style="background:var(--accent-purple-dim)">2</div>
+      <h5>Specify</h5>
+      <p>What to build & why</p>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num" style="background:var(--accent-green-dim)">3</div>
+      <h5>Clarify</h5>
+      <p>Resolve ambiguities</p>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num" style="background:var(--accent-orange)">4</div>
+      <h5>Plan</h5>
+      <p>Tech stack & architecture</p>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num" style="background:var(--accent-red)">5</div>
+      <h5>Tasks</h5>
+      <p>Actionable work items</p>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num" style="background:var(--accent-cyan)">6</div>
+      <h5>Implement</h5>
+      <p>AI generates code</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════ CHAPTER 3 ═══════════ -->
+<section id="ch3" class="section">
+  <div class="chapter-header reveal">
+    <div class="chapter-label" data-color="green">Chapter 03</div>
+    <h2>Introducing GitHub Spec Kit</h2>
+    <p>An open-source toolkit with 68,000+ stars that makes Spec-Driven Development practical and accessible.</p>
+  </div>
+
+  <div class="reveal">
+    <p>GitHub Spec Kit is the open-source toolkit that provides structure, templates, and workflow automation for SDD. It works seamlessly with VS Code, GitHub Copilot, and 15+ other AI coding agents. Install once, use on every project.</p>
+  </div>
+
+  <h3 class="reveal">The Seven Slash Commands</h3>
+  <p class="reveal">After initializing Spec Kit in your project, these slash commands become available in your AI assistant's chat. Each one represents a key stage in the SDD workflow:</p>
+
+  <div class="steps reveal">
+    <div class="step-item">
+      <div class="step-num" style="background:var(--accent-blue-dim)">1</div>
+      <div>
+        <h4><code>/speckit.constitution</code></h4>
+        <p>Defines the non-negotiable rules for your project — coding standards, testing requirements, accessibility, performance targets. Every other command references this file. <strong>Run once per project.</strong></p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num" style="background:var(--accent-purple-dim)">2</div>
+      <div>
+        <h4><code>/speckit.specify</code></h4>
+        <p>Creates a feature specification from your description. Describe WHAT and WHY. Auto-creates a Git branch and spec directory. <strong>Run for each new feature.</strong></p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num" style="background:var(--accent-green-dim)">3</div>
+      <div>
+        <h4><code>/speckit.clarify</code></h4>
+        <p>Asks structured, sequential questions to resolve ambiguities. Catches gaps before they become expensive bugs. <strong>Optional but strongly recommended.</strong></p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num" style="background:var(--accent-orange)">4</div>
+      <div>
+        <h4><code>/speckit.plan</code></h4>
+        <p>Generates a technical implementation plan — architecture, dependencies, data models. You provide tech stack choices. <strong>Run after spec is finalized.</strong></p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num" style="background:rgba(102,57,186,0.9)">5</div>
+      <div>
+        <h4><code>/speckit.analyze</code></h4>
+        <p>Cross-artifact consistency check. Validates that constitution, spec, plan, and tasks all align. Flags CRITICAL findings. <strong>Quality gate before implementation.</strong></p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num" style="background:var(--accent-red)">6</div>
+      <div>
+        <h4><code>/speckit.tasks</code></h4>
+        <p>Breaks the plan into ordered, executable tasks with clear dependencies and acceptance criteria. Each task is focused and manageable. <strong>Run after plan is ready.</strong></p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num" style="background:var(--accent-cyan)">7</div>
+      <div>
+        <h4><code>/speckit.implement</code></h4>
+        <p>Executes all tasks to generate working code, tests, and configuration. The AI references every artifact you've built. <strong>Run when everything is approved.</strong></p>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="reveal">Project Structure</h3>
+  <div class="code-block reveal">
+    <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Project Directory</span></div>
+    <div class="code-body">my-project/
+├── <span class="fn">.specify/</span>
+│   ├── <span class="fn">memory/</span>
+│   │   └── <span class="str">constitution.md</span>        <span class="cm"># Your project principles</span>
+│   ├── <span class="fn">scripts/</span>
+│   │   ├── create-new-feature.sh   <span class="cm"># Feature scaffolding</span>
+│   │   └── setup-plan.sh           <span class="cm"># Plan automation</span>
+│   └── <span class="fn">templates/</span>
+│       ├── spec-template.md        <span class="cm"># Specification format</span>
+│       ├── plan-template.md        <span class="cm"># Plan format</span>
+│       └── tasks-template.md       <span class="cm"># Tasks format</span>
+├── <span class="fn">specs/</span>
+│   └── <span class="fn">001-feature-name/</span>
+│       ├── <span class="str">spec.md</span>                <span class="cm"># Feature specification</span>
+│       ├── <span class="str">plan.md</span>                <span class="cm"># Technical plan</span>
+│       └── <span class="str">tasks.md</span>               <span class="cm"># Task breakdown</span>
+└── <span class="fn">.github/prompts/</span>               <span class="cm"># Copilot agent commands</span></div>
+  </div>
+
+  <div class="callout tip reveal">
+    <div class="callout-title">💡 Version Control Everything</div>
+    <p>All spec files are plain Markdown — perfect for Git. Commit them alongside your code so you have a complete, auditable trail from intent to implementation. When someone asks "why was it built this way?", your spec files have the answer.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════ CHAPTER 4 ═══════════ -->
+<section id="ch4" class="section">
+  <div class="chapter-header reveal">
+    <div class="chapter-label" data-color="orange">Chapter 04</div>
+    <h2>Setting Up Your Environment</h2>
+    <p>From zero to a working Spec Kit project in under 10 minutes.</p>
+  </div>
+
+  <div class="steps reveal">
+    <div class="step-item">
+      <div class="step-num" style="background:var(--accent-orange)">1</div>
+      <div>
+        <h4>Install VS Code</h4>
+        <p>Download from <a href="https://code.visualstudio.com" target="_blank">code.visualstudio.com</a>. Free for Windows, macOS, and Linux. We use VS Code because of its excellent Copilot integration and Agent Mode support.</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num" style="background:var(--accent-orange)">2</div>
+      <div>
+        <h4>Install GitHub Copilot</h4>
+        <p>Open Extensions in VS Code, search "GitHub Copilot", install it, and sign in with your GitHub account. <strong>Critical: enable Agent Mode</strong> — Spec Kit's slash commands require it. Look for the agent toggle in the Copilot chat panel header.</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num" style="background:var(--accent-orange)">3</div>
+      <div>
+        <h4>Install the uv package manager</h4>
+        <p>Spec Kit ships as a Python CLI tool distributed via uv. Install uv first:</p>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Terminal</span></div>
+          <div class="code-body"><span class="cm"># macOS / Linux</span>
+<span class="cmd">curl</span> <span class="flag">-LsSf</span> https://astral.sh/uv/install.sh | <span class="cmd">sh</span>
+
+<span class="cm"># Windows (PowerShell)</span>
+<span class="cmd">powershell</span> <span class="flag">-ExecutionPolicy ByPass</span> <span class="flag">-c</span> <span class="str">"irm https://astral.sh/uv/install.ps1 | iex"</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num" style="background:var(--accent-orange)">4</div>
+      <div>
+        <h4>Install Spec Kit</h4>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Terminal</span></div>
+          <div class="code-body"><span class="cm"># Install Spec Kit globally (recommended — one-time setup)</span>
+<span class="cmd">uv</span> tool install specify-cli <span class="flag">--from</span> git+https://github.com/github/spec-kit.git
+
+<span class="cm"># Verify the installation</span>
+<span class="cmd">specify</span> <span class="flag">--version</span>
+
+<span class="cm"># Check your system has everything Spec Kit needs</span>
+<span class="cmd">specify</span> check</div>
+        </div>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num" style="background:var(--accent-orange)">5</div>
+      <div>
+        <h4>Initialize Your First Project</h4>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Terminal</span></div>
+          <div class="code-body"><span class="cm"># Create a new project configured for GitHub Copilot</span>
+<span class="cmd">specify</span> init my-project <span class="flag">--ai</span> copilot
+
+<span class="cm"># Open it in VS Code</span>
+<span class="cmd">code</span> my-project</div>
+        </div>
+        <div class="callout warn" style="margin-top:1rem">
+          <div class="callout-title">⚠️ Important</div>
+          <p>When VS Code opens, switch Copilot to <strong>Agent Mode</strong> in the chat panel. Type <code>/speckit</code> and you should see all 7 commands in the autocomplete. If they don't appear, restart VS Code.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════ CHAPTER 5 ═══════════ -->
+<section id="ch5" class="section section-wide">
+  <div class="chapter-header reveal">
+    <div class="chapter-label" data-color="blue">Chapter 05</div>
+    <h2>The SDD Workflow Deep Dive</h2>
+    <p>A detailed walkthrough of each phase, with examples and best practices for every command.</p>
+  </div>
+
+  <h3 class="reveal">Phase 1 — The Constitution</h3>
+  <div class="reveal">
+    <p>The constitution is the <strong>DNA of your project</strong>. It defines non-negotiable principles that every AI interaction must follow. Think of it as the "rules of the game" — coding standards, testing strategy, performance targets, accessibility requirements.</p>
+    <div class="prompt-block">
+      <div class="prompt-label" style="color:var(--accent-blue)">📋 Example Prompt — Constitution</div>
+      <div class="prompt-body">
+        <span class="prompt-cmd" style="color:var(--accent-blue)">/speckit.constitution</span>
+        Create principles for a modern web application focused on:<br><br>
+        <strong>• Code quality:</strong> TypeScript strict mode, no any types, ESLint + Prettier<br>
+        <strong>• Testing:</strong> Unit tests with Vitest, integration tests for critical paths, 80% coverage minimum<br>
+        <strong>• Accessibility:</strong> WCAG 2.1 AA, semantic HTML, keyboard navigation, screen reader support<br>
+        <strong>• Performance:</strong> &lt;3s initial load, lazy loading for non-critical resources, Core Web Vitals passing<br>
+        <strong>• Architecture:</strong> Feature-based folder structure, custom hooks for shared logic, no prop drilling beyond 2 levels
+      </div>
+    </div>
+    <div class="callout tip">
+      <div class="callout-title">💡 Constitution Tips</div>
+      <p>Keep it to 8-12 clear principles. Too many create conflicts; too few leave too much ambiguity. <strong>Always review the generated constitution</strong> — the AI expands your input, and you should verify it captured your intent correctly. This is the foundation everything else builds on.</p>
+    </div>
+  </div>
+
+  <h3 class="reveal">Phase 2 — Specification</h3>
+  <div class="reveal">
+    <p>Describe <strong>WHAT</strong> you want to build and <strong>WHY</strong>, not HOW. Focus on features, user stories, and expected behaviors. Spec Kit auto-creates a Git branch and directory for each feature.</p>
+    <div class="prompt-block">
+      <div class="prompt-label" style="color:var(--accent-purple)">📝 Example Prompt — Specification</div>
+      <div class="prompt-body">
+        <span class="prompt-cmd" style="color:var(--accent-purple)">/speckit.specify</span>
+        Build a habit tracking application where users can create daily habits with custom names and emoji icons, track completion with a simple tap, view current and longest streaks, and see weekly/monthly progress on a visual dashboard. The app should feel motivating and be usable one-handed on mobile.
+      </div>
+    </div>
+    <p>The AI will expand this into a full specification with user stories, acceptance criteria, edge cases, and constraints — all stored in <code>specs/001-habit-tracker/spec.md</code>. <strong>Review every section.</strong> This is your most important checkpoint.</p>
+  </div>
+
+  <h3 class="reveal">Phase 3 — Clarification</h3>
+  <div class="reveal">
+    <p>The <code>/speckit.clarify</code> command triggers structured Q&A that eliminates ambiguity <em>before</em> it becomes expensive rework. The AI asks sequential questions based on gaps it detects in your specification.</p>
+    <div class="callout info">
+      <div class="callout-title">📌 When to Clarify</div>
+      <p>Skip this for very simple features. Use it for anything with user interactions, data persistence, multiple states, or business logic. The 5 minutes you spend answering questions saves hours of debugging wrong assumptions later.</p>
+    </div>
+  </div>
+
+  <h3 class="reveal">Phase 4 — Technical Planning</h3>
+  <div class="reveal">
+    <p>Now you define the HOW: technology stack, architecture, and dependencies. The plan is checked against your constitution for compliance.</p>
+    <div class="prompt-block">
+      <div class="prompt-label" style="color:var(--accent-orange)">🏗️ Example Prompt — Plan</div>
+      <div class="prompt-body">
+        <span class="prompt-cmd" style="color:var(--accent-orange)">/speckit.plan</span>
+        Use React 18 with TypeScript and Vite for the frontend. Tailwind CSS for styling. Browser localStorage for persistence — no backend needed. React Router v6 for navigation. date-fns for date calculations. framer-motion for completion animations. Keep external dependencies minimal.
+      </div>
+    </div>
+  </div>
+
+  <h3 class="reveal">Phase 5 — Analysis & Tasks</h3>
+  <div class="reveal">
+    <p>Run <code>/speckit.analyze</code> to validate everything aligns, then <code>/speckit.tasks</code> to generate ordered, actionable work items. Each task is small enough for reliable AI execution, with clear dependencies and acceptance criteria.</p>
+  </div>
+
+  <h3 class="reveal">Phase 6 — Implementation</h3>
+  <div class="reveal">
+    <p>Run <code>/speckit.implement</code> and let the AI work. It reads the constitution for principles, the spec for requirements, the plan for architecture, and executes tasks in order — generating real code, tests, and configuration files.</p>
+    
+    <div class="compare">
+      <div class="compare-col bad">
+        <h4>Traditional Process: ~12 hours</h4>
+        <ul>
+          <li>Write a PRD (2-3 hours)</li>
+          <li>Create design documents (2-3 hours)</li>
+          <li>Set up project structure (30 min)</li>
+          <li>Write technical specifications (3-4 hours)</li>
+          <li>Create test plans (2 hours)</li>
+        </ul>
+      </div>
+      <div class="compare-col good">
+        <h4>SDD Process: ~17 minutes</h4>
+        <ul>
+          <li>/speckit.constitution (5 min)</li>
+          <li>/speckit.specify (5 min)</li>
+          <li>/speckit.plan (5 min)</li>
+          <li>/speckit.tasks (2 min)</li>
+          <li>/speckit.implement (automated)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════ CHAPTER 6 ═══════════ -->
+<section id="ch6" class="section">
+  <div class="chapter-header reveal">
+    <div class="chapter-label" data-color="pink">Chapter 06</div>
+    <h2>Token Optimization & Best Practices</h2>
+    <p>How SDD dramatically reduces AI token consumption while producing better output.</p>
+  </div>
+
+  <div class="reveal">
+    <p>Every AI prompt costs tokens — and tokens cost money. Vibe coding wastes tokens through repetition, context-switching, and re-explanation. SDD minimizes this by giving the AI everything it needs, structured for maximum clarity, <strong>once</strong>.</p>
+  </div>
+
+  <h3 class="reveal">Token Consumption Comparison</h3>
+  <div class="reveal">
+    <div class="metric-row">
+      <span class="metric-label">Feature build (no spec)</span>
+      <div class="metric-bar"><div class="metric-fill" style="width:92%;background:var(--accent-red)">~92% token budget</div></div>
+    </div>
+    <div class="metric-row">
+      <span class="metric-label">Feature build (with SDD)</span>
+      <div class="metric-bar"><div class="metric-fill" style="width:35%;background:var(--accent-green)">~35% token budget</div></div>
+    </div>
+    <div class="metric-row">
+      <span class="metric-label">Bug fix (no spec)</span>
+      <div class="metric-bar"><div class="metric-fill" style="width:68%;background:var(--accent-red)">~68% token budget</div></div>
+    </div>
+    <div class="metric-row">
+      <span class="metric-label">Bug fix (with SDD)</span>
+      <div class="metric-bar"><div class="metric-fill" style="width:18%;background:var(--accent-green)">~18% token budget</div></div>
+    </div>
+    <p style="font-size:0.78rem;color:var(--text-muted);margin-top:0.5rem">* Approximate comparison based on community reports. Savings vary by project complexity.</p>
+  </div>
+
+  <h3 class="reveal">10 Best Practices</h3>
+  <div class="card-grid reveal">
+    <div class="card">
+      <h4>1. Invest in the First Prompt</h4>
+      <p>Your /speckit.specify prompt is the highest-leverage moment. More detail upfront = fewer corrections later = fewer tokens wasted.</p>
+    </div>
+    <div class="card">
+      <h4>2. Review Every Artifact</h4>
+      <p>Don't blindly accept generated specs, plans, or tasks. Your review turns generic output into a precise specification.</p>
+    </div>
+    <div class="card">
+      <h4>3. Keep the Constitution Focused</h4>
+      <p>8-12 clear principles. Too many create conflicts; too few leave ambiguity that wastes tokens on clarification.</p>
+    </div>
+    <div class="card">
+      <h4>4. Always Clarify Complex Features</h4>
+      <p>5 minutes answering /speckit.clarify questions saves hours of "no, that's not what I meant" debugging loops.</p>
+    </div>
+    <div class="card">
+      <h4>5. Run /speckit.analyze</h4>
+      <p>The analysis command is your quality gate. It catches misalignments before a single line of code is written.</p>
+    </div>
+    <div class="card">
+      <h4>6. One Feature Per Spec</h4>
+      <p>Don't specify your entire app at once. Break into features with separate specs. Smaller specs = focused tasks = reliable output.</p>
+    </div>
+    <div class="card">
+      <h4>7. Iterate on Specifications</h4>
+      <p>Specs aren't final after pass one. Update them as you learn, then re-run downstream commands. SDD is iterative.</p>
+    </div>
+    <div class="card">
+      <h4>8. Commit Specs to Git</h4>
+      <p>Treat spec files as first-class code. Full audit trail of decisions. New team members read specs instead of reverse-engineering code.</p>
+    </div>
+    <div class="card">
+      <h4>9. Use Descriptive Names</h4>
+      <p>"001-user-auth" beats "001-feature". Clear names help navigate specs/ and make Git history meaningful.</p>
+    </div>
+    <div class="card">
+      <h4>10. Learn from Results</h4>
+      <p>After /speckit.implement, review the code. Gaps between expectation and output = feedback to improve your spec writing.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════ CHAPTER 7: HABITTRACKER ═══════════ -->
+<section id="ch7" class="section section-wide">
+  <div class="chapter-header reveal">
+    <div class="chapter-label" data-color="cyan">Chapter 07</div>
+    <h2>Project: Build a HabitTracker</h2>
+    <p>A complete, hands-on walkthrough. Every prompt, every command, every decision — building a genuinely useful app.</p>
+  </div>
+
+  <div class="reveal">
+    <p>This isn't a toy project. We're building a <strong>real HabitTracker app</strong> that you'll actually want to use daily. It tracks habits, calculates streaks, shows visual progress, and helps you build better routines. Follow along step by step — copy the prompts exactly, and you'll have a working app.</p>
+  </div>
+
+  <!-- PROJECT BLUEPRINT -->
+  <div class="blueprint reveal">
+    <div class="blueprint-header">
+      <div class="blueprint-icon">📊</div>
+      <div>
+        <h3 style="margin:0">HabitTracker — Project Blueprint</h3>
+        <p>A daily habit tracking app that helps users build and maintain positive routines</p>
+      </div>
+    </div>
+    <div class="blueprint-grid">
+      <div class="blueprint-item">🖥️ <span>React 18 + TypeScript</span></div>
+      <div class="blueprint-item">⚡ <span>Vite build tool</span></div>
+      <div class="blueprint-item">🎨 <span>Tailwind CSS</span></div>
+      <div class="blueprint-item">💾 <span>localStorage</span></div>
+      <div class="blueprint-item">🧭 <span>React Router v6</span></div>
+      <div class="blueprint-item">📅 <span>date-fns</span></div>
+      <div class="blueprint-item">✨ <span>framer-motion</span></div>
+      <div class="blueprint-item">⏱️ <span>~30 min to build</span></div>
+    </div>
+  </div>
+
+  <!-- APP FEATURES -->
+  <h3 class="reveal">What We're Building</h3>
+  <p class="reveal">A genuinely useful app with these real-world features:</p>
+  
+  <div class="feature-grid reveal">
+    <div class="feature-card">
+      <div class="feature-emoji">✅</div>
+      <h4>Habit Management</h4>
+      <p>Create, edit, and delete habits with custom emoji icons and flexible frequency settings.</p>
+      <ul>
+        <li>Custom name + emoji picker</li>
+        <li>Daily, weekday, or specific-day frequency</li>
+        <li>Category grouping (health, learning, productivity)</li>
+        <li>Drag-and-drop reordering</li>
+      </ul>
+    </div>
+    <div class="feature-card">
+      <div class="feature-emoji">📱</div>
+      <h4>Daily Tracking</h4>
+      <p>One-tap completion designed for mobile-first, one-handed use. Visual feedback that feels rewarding.</p>
+      <ul>
+        <li>Today view with all active habits</li>
+        <li>Tap to complete with animation</li>
+        <li>Undo within 5 seconds</li>
+        <li>Progress ring showing daily completion %</li>
+      </ul>
+    </div>
+    <div class="feature-card">
+      <div class="feature-emoji">🔥</div>
+      <h4>Streaks & Motivation</h4>
+      <p>Streak tracking that motivates consistency. Visual cues that make progress tangible.</p>
+      <ul>
+        <li>Current streak counter per habit</li>
+        <li>Personal best streak record</li>
+        <li>Streak milestones (7, 30, 100 days)</li>
+        <li>Motivational messages based on progress</li>
+      </ul>
+    </div>
+    <div class="feature-card">
+      <div class="feature-emoji">📈</div>
+      <h4>Progress Dashboard</h4>
+      <p>Visual analytics that help users understand their patterns and celebrate wins.</p>
+      <ul>
+        <li>Weekly completion heat grid</li>
+        <li>Monthly calendar heatmap</li>
+        <li>Overall completion rate</li>
+        <li>Best performing habits ranking</li>
+      </ul>
+    </div>
+    <div class="feature-card">
+      <div class="feature-emoji">🎯</div>
+      <h4>Smart Defaults</h4>
+      <p>Pre-configured starter habits so new users get value immediately without setup friction.</p>
+      <ul>
+        <li>Starter pack: exercise, reading, water, meditation</li>
+        <li>Quick-add from curated habit library</li>
+        <li>Sensible default frequencies</li>
+        <li>Skip onboarding if desired</li>
+      </ul>
+    </div>
+    <div class="feature-card">
+      <div class="feature-emoji">💾</div>
+      <h4>Data Persistence</h4>
+      <p>All data stored locally. No accounts, no backend, no privacy concerns. Works offline.</p>
+      <ul>
+        <li>localStorage with migration support</li>
+        <li>JSON export for backup</li>
+        <li>Import from backup file</li>
+        <li>Data schema versioning</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- STEP BY STEP -->
+  <h3 class="reveal">Step-by-Step Build Guide</h3>
+
+  <div class="reveal">
+    <h4>Step 1 — Initialize the Project</h4>
+    <p>Open your terminal and create the project:</p>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Terminal</span></div>
+      <div class="code-body"><span class="cm"># Create the HabitTracker project with Copilot support</span>
+<span class="cmd">specify</span> init habit-tracker <span class="flag">--ai</span> copilot
+
+<span class="cm"># Open in VS Code</span>
+<span class="cmd">code</span> habit-tracker
+
+<span class="cm"># In VS Code: Open Copilot Chat → Switch to Agent Mode</span>
+<span class="cm"># Type /speckit and verify all commands appear</span></div>
+    </div>
+    <div class="callout tip">
+      <div class="callout-title">💡 Verify Agent Mode</div>
+      <p>In the Copilot chat panel, look for a toggle or dropdown that says "Agent" mode. The /speckit commands only appear in Agent mode. If they don't show up, restart VS Code and try again.</p>
+    </div>
+  </div>
+
+  <div class="reveal">
+    <h4>Step 2 — Define the Constitution</h4>
+    <p>This sets the rules of the game. Copy this prompt into Copilot chat:</p>
+    <div class="prompt-block">
+      <div class="prompt-label" style="color:var(--accent-blue)">📋 Copy this prompt exactly</div>
+      <div class="prompt-body"><span class="prompt-cmd" style="color:var(--accent-blue)">/speckit.constitution</span>
+Create a constitution for a daily habit tracking web application with these principles:
+
+<strong>Code Quality:</strong> React with TypeScript in strict mode. No "any" types. ESLint + Prettier enforced. All components are functional with hooks. Feature-based folder structure (src/features/habits/, src/features/dashboard/, etc.).
+
+<strong>Testing:</strong> Unit tests with Vitest for all business logic (streak calculations, data persistence, date handling). Integration tests for critical user flows. Minimum 80% coverage on business logic.
+
+<strong>Styling:</strong> Tailwind CSS utility-first. Mobile-first responsive design. Custom design tokens via Tailwind config. No inline styles. Dark mode support via CSS variables.
+
+<strong>Accessibility:</strong> WCAG 2.1 AA compliance. Semantic HTML everywhere. All interactive elements keyboard navigable. Screen reader labels on all icons and buttons. Focus indicators visible.
+
+<strong>Performance:</strong> Under 3s initial load on 3G. Lazy load non-critical routes. No unnecessary re-renders — use React.memo, useMemo, useCallback where measurable.
+
+<strong>Data:</strong> Browser localStorage only. No backend, no accounts, no tracking. JSON schema versioning for data migrations. All data operations through a custom useStorage hook.
+
+<strong>Architecture:</strong> Custom hooks for all shared logic. Maximum 2 levels of prop passing — use Context beyond that. Each feature is self-contained with its own types, hooks, components, and tests.</div>
+    </div>
+    <div class="callout warn">
+      <div class="callout-title">⚠️ Review the Output</div>
+      <p>After Copilot generates the constitution, open <code>.specify/memory/constitution.md</code> and read it thoroughly. The AI will expand your input into detailed articles. Make sure it captured your intent — especially around testing and accessibility standards. Edit anything that doesn't match your expectations before moving on.</p>
+    </div>
+  </div>
+
+  <div class="reveal">
+    <h4>Step 3 — Write the Specification</h4>
+    <p>This is <strong>the most important prompt</strong> in the entire process. The more detail here, the better everything downstream will be. Copy this into Copilot chat:</p>
+    <div class="prompt-block">
+      <div class="prompt-label" style="color:var(--accent-purple)">📝 Copy this prompt exactly</div>
+      <div class="prompt-body"><span class="prompt-cmd" style="color:var(--accent-purple)">/speckit.specify</span>
+Build a daily habit tracker called "HabitTracker" — a single-page web app that helps users build and maintain positive daily routines through simple tracking and visual progress feedback.
+
+<strong>== CORE FEATURES ==</strong>
+
+<strong>1. Habit Management</strong>
+Users can create habits with: a custom name (max 40 chars), an emoji icon (from a predefined set of ~30 common emojis), a frequency (daily, weekdays only, or specific days of the week), and an optional category (Health, Learning, Productivity, Mindfulness, Custom).
+Users can edit any habit's name, icon, frequency, or category. Users can delete habits with a confirmation dialog. Users can reorder habits via drag-and-drop. Maximum 20 active habits.
+
+<strong>2. Daily Tracking View (Home Screen)</strong>
+Shows today's date prominently. Lists all habits that are active for today (based on frequency). Each habit shows: emoji icon, name, current streak count, and a completion toggle. Tapping/clicking the toggle marks the habit complete with a satisfying animation (scale + checkmark). Undo is available for 5 seconds after completion. A progress ring at the top shows "X of Y habits completed today". When all habits are complete, show a celebration animation.
+
+<strong>3. Streaks Engine</strong>
+A streak is the count of consecutive scheduled days a habit was completed. Missing a scheduled day resets the streak to 0. The app tracks: current streak and personal best (longest) streak per habit. Streak milestones at 7 days, 30 days, 66 days (habit formation), and 100 days trigger a visual badge. Streaks only count days the habit was scheduled (weekday-only habits don't break on weekends).
+
+<strong>4. Progress Dashboard</strong>
+Weekly view: 7-day grid showing completion status per habit (color-coded). Monthly view: Calendar heatmap showing daily overall completion percentage (from gray to green). Statistics: overall completion rate (last 7 / 30 / 90 days), current longest streak across all habits, total habits completed all-time, most consistent habit. Motivational message that changes based on performance.
+
+<strong>5. Starter Habits</strong>
+On first launch (no data in localStorage), offer a set of 6 starter habits the user can select from: 💪 Exercise (daily), 📚 Read 20 min (daily), 💧 Drink 8 glasses of water (daily), 🧘 Meditate (daily), 📝 Journal (daily), 🚶 10,000 steps (weekdays). User can skip and create their own, or select some starters and add custom ones.
+
+<strong>6. Data Layer</strong>
+All data in localStorage. Data model: habits (id, name, emoji, frequency, category, createdAt, order), completions (habitId, date, completedAt), and settings (theme, onboardingComplete). JSON export button downloads all data. JSON import button restores from backup with conflict handling. Data schema version number for future migrations.
+
+<strong>== USER EXPERIENCE REQUIREMENTS ==</strong>
+Mobile-first: usable one-handed on a phone. Touch targets minimum 44x44px. Navigation: bottom tab bar with 3 tabs — Today, Stats, Settings. Animations: completion toggle, streak milestone, celebration. Theme: clean, modern, encouraging — not clinical. Default dark mode with light mode toggle. Empty states with helpful messages ("Add your first habit!"). Loading states aren't needed (localStorage is instant) but error states are.</div>
+    </div>
+  </div>
+
+  <div class="reveal">
+    <h4>Step 4 — Clarify Ambiguities</h4>
+    <p>Run the clarify command. The AI will ask structured questions. Here are the ones you'll likely see and suggested answers:</p>
+
+    <div class="prompt-block">
+      <div class="prompt-label" style="color:var(--accent-green)">🔍 Run clarification</div>
+      <div class="prompt-body"><span class="prompt-cmd" style="color:var(--accent-green)">/speckit.clarify</span></div>
+    </div>
+
+    <div class="card-grid" style="margin-top:1rem">
+      <div class="card">
+        <h4 style="color:var(--accent-green);font-size:0.9rem">Q: What happens to historical data when a habit is deleted?</h4>
+        <p><strong>Answer:</strong> Keep completion history. Deleted habits move to an "archived" state so their data still shows in stats. Users can permanently delete from settings.</p>
+      </div>
+      <div class="card">
+        <h4 style="color:var(--accent-green);font-size:0.9rem">Q: Should the app handle timezone changes?</h4>
+        <p><strong>Answer:</strong> Use the browser's local timezone. "Today" is always based on device time. Don't handle timezone changes in v1 — keep it simple.</p>
+      </div>
+      <div class="card">
+        <h4 style="color:var(--accent-green);font-size:0.9rem">Q: How should the emoji picker work?</h4>
+        <p><strong>Answer:</strong> A simple grid of ~30 pre-selected emojis organized by category (activities, objects, nature, food). No free-text emoji input. Fast and mobile-friendly.</p>
+      </div>
+      <div class="card">
+        <h4 style="color:var(--accent-green);font-size:0.9rem">Q: What's the behavior when opening the app for the first time today?</h4>
+        <p><strong>Answer:</strong> Show today's habits with all toggles unchecked. Display yesterday's completion rate as a small banner ("Yesterday: 5/6 completed!"). Focus is always on today.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="reveal">
+    <h4>Step 5 — Create the Technical Plan</h4>
+    <div class="prompt-block">
+      <div class="prompt-label" style="color:var(--accent-orange)">🏗️ Copy this prompt exactly</div>
+      <div class="prompt-body"><span class="prompt-cmd" style="color:var(--accent-orange)">/speckit.plan</span>
+Technical decisions for the HabitTracker implementation:
+
+<strong>Build & Framework:</strong> Vite 5 with React 18 and TypeScript in strict mode. SWC for fast compilation.
+
+<strong>Styling:</strong> Tailwind CSS v3 with custom theme config for brand colors, spacing, and dark mode via class strategy. No component library — all custom components.
+
+<strong>Routing:</strong> React Router v6 with 3 routes: "/" (Today view), "/stats" (Dashboard), "/settings" (Settings). Bottom tab bar navigation component.
+
+<strong>State Management:</strong> React Context for global state (habits list, completions, settings). useReducer for complex state transitions (adding/editing/deleting habits). Custom useLocalStorage hook that handles serialization, deserialization, and migration.
+
+<strong>Date Handling:</strong> date-fns for all date operations. Helper functions: isHabitScheduledForDate(), getStreakForHabit(), getCompletionRateForPeriod().
+
+<strong>Animations:</strong> framer-motion for completion toggle, celebration, and page transitions. CSS transitions for hover and focus states. Keep bundle impact minimal.
+
+<strong>Data Architecture:</strong> Types in src/types/. Custom hooks in src/hooks/. Features in src/features/habits/, src/features/dashboard/, src/features/settings/. Shared components in src/components/. Business logic in pure functions (easy to test).
+
+<strong>Testing:</strong> Vitest + React Testing Library. Test all streak calculation functions, storage hook, and date utility functions. Integration test for the completion flow.</div>
+    </div>
+  </div>
+
+  <div class="reveal">
+    <h4>Step 6 — Analyze for Consistency</h4>
+    <p>Before generating tasks, run the quality gate:</p>
+    <div class="prompt-block">
+      <div class="prompt-label" style="color:rgba(102,57,186,0.9)">🔍 Consistency check</div>
+      <div class="prompt-body"><span class="prompt-cmd" style="color:var(--accent-purple)">/speckit.analyze</span>
+<span style="color:var(--text-muted)">The AI will check:
+• Spec alignment with constitution (testing, accessibility, etc.)
+• Plan consistency with spec requirements (are all features covered?)
+• Conflicts between principles and technical choices
+• Coverage gaps
+
+Fix any CRITICAL findings before proceeding!</span></div>
+    </div>
+    <div class="callout danger">
+      <div class="callout-title">🚨 Don't Skip This</div>
+      <p>If the analysis finds CRITICAL issues (e.g., "spec requires drag-and-drop but plan doesn't include a DnD library"), fix them in the spec or plan <em>before</em> generating tasks. This is the cheapest place to catch mistakes — before any code exists.</p>
+    </div>
+  </div>
+
+  <div class="reveal">
+    <h4>Step 7 — Generate Tasks</h4>
+    <div class="prompt-block">
+      <div class="prompt-label" style="color:var(--accent-red)">📋 Task generation</div>
+      <div class="prompt-body"><span class="prompt-cmd" style="color:var(--accent-red)">/speckit.tasks</span>
+<span style="color:var(--text-muted)">Spec Kit will generate ordered tasks like:
+
+Task 1:  Scaffold Vite + React + TypeScript project
+Task 2:  Configure Tailwind CSS with custom theme
+Task 3:  Set up React Router with bottom tab navigation
+Task 4:  Define TypeScript types (Habit, Completion, Settings)
+Task 5:  Build useLocalStorage custom hook with migrations
+Task 6:  Create HabitContext provider with useReducer
+Task 7:  Build EmojiPicker component
+Task 8:  Build HabitForm (create/edit) component
+Task 9:  Build HabitCard with completion toggle
+Task 10: Implement TodayView page with progress ring
+Task 11: Build streak calculation engine (pure functions)
+Task 12: Create CalendarHeatmap component
+Task 13: Build Dashboard/Stats page
+Task 14: Implement Settings page (theme, export, import)
+Task 15: Add onboarding flow with starter habits
+Task 16: Add framer-motion animations
+Task 17: Write Vitest unit tests for business logic
+Task 18: Write integration tests for completion flow
+Task 19: Accessibility audit and fixes
+Task 20: Final polish and responsive testing</span></div>
+    </div>
+    <div class="callout tip">
+      <div class="callout-title">💡 Review the Tasks</div>
+      <p>Open <code>specs/001-habit-tracker/tasks.md</code> and review the generated tasks. Are they in the right order? Are dependencies clear? Are acceptance criteria specific? This is your last chance to adjust before implementation begins.</p>
+    </div>
+  </div>
+
+  <div class="reveal">
+    <h4>Step 8 — Implement!</h4>
+    <p>This is the moment. Run the implement command and let Copilot build your entire app:</p>
+    <div class="prompt-block">
+      <div class="prompt-label" style="color:var(--accent-cyan)">🚀 Launch implementation</div>
+      <div class="prompt-body"><span class="prompt-cmd" style="color:var(--accent-cyan)">/speckit.implement</span>
+<span style="color:var(--text-muted)">Copilot will now:
+1. Read the constitution for coding standards
+2. Review the spec for feature requirements
+3. Follow the plan for architecture decisions
+4. Execute each task in order
+5. Generate code, tests, and configuration
+6. Validate against acceptance criteria
+
+⏱️ This will take 10-20 minutes. Let it work uninterrupted.</span></div>
+    </div>
+  </div>
+
+  <div class="reveal">
+    <h4>Step 9 — Test & Verify</h4>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Terminal</span></div>
+      <div class="code-body"><span class="cm"># Install dependencies</span>
+<span class="cmd">npm</span> install
+
+<span class="cm"># Start the development server</span>
+<span class="cmd">npm</span> run dev
+
+<span class="cm"># Open in browser (usually http://localhost:5173)</span>
+
+<span class="cm"># Run tests</span>
+<span class="cmd">npm</span> run test
+
+<span class="cm"># Test checklist:</span>
+<span class="cm"># ✅ Create a new habit with emoji and name</span>
+<span class="cm"># ✅ Mark a habit complete — check animation plays</span>
+<span class="cm"># ✅ Verify streak counter increments</span>
+<span class="cm"># ✅ Check the dashboard shows progress</span>
+<span class="cm"># ✅ Toggle dark/light mode</span>
+<span class="cm"># ✅ Export data → delete all → import data</span>
+<span class="cm"># ✅ Test on mobile viewport (Chrome DevTools)</span>
+<span class="cm"># ✅ Run keyboard-only navigation test</span></div>
+    </div>
+  </div>
+
+  <div class="reveal">
+    <h4>Step 10 — Fix Issues (Normal!)</h4>
+    <p>If something doesn't work — and it probably won't be perfect on the first try — here's the workflow:</p>
+    <div class="card-grid">
+      <div class="card" style="border-color:var(--accent-red)">
+        <h4 style="color:var(--accent-red)">Bug in Generated Code</h4>
+        <p>Copy the error into Copilot chat. It has full context from the spec and will fix it quickly. For simple bugs, this is faster than updating the spec.</p>
+      </div>
+      <div class="card" style="border-color:var(--accent-orange)">
+        <h4 style="color:var(--accent-orange)">Missing Feature</h4>
+        <p>Update the spec with the missing requirement. Re-run <code>/speckit.tasks</code> to generate a new task list, then <code>/speckit.implement</code> for the missing piece.</p>
+      </div>
+      <div class="card" style="border-color:var(--accent-purple)">
+        <h4 style="color:var(--accent-purple)">Architecture Issue</h4>
+        <p>Update the plan to fix the architectural decision. Re-run tasks and implementation. The spec-driven approach means you're fixing the design, not patching symptoms.</p>
+      </div>
+    </div>
+
+    <div class="callout tip" style="margin-top:1.5rem">
+      <div class="callout-title">🎉 Congratulations!</div>
+      <p>You've built a genuinely useful HabitTracker app using Spec-Driven Development. Every decision is documented in your spec files. You can iterate, add features, or hand the project to another developer — and they'll know <em>exactly</em> what was built and why. That's the power of SDD.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════ CLOSING ═══════════ -->
+<section class="section" style="text-align:center; padding:5rem 2rem;">
+  <div class="reveal">
+    <h2 style="font-family:var(--font-display); font-size:2rem; margin-bottom:1rem;">Stop vibe coding.<br>Start building with intent.</h2>
+    <p style="max-width:500px; margin:0 auto 2rem; font-size:1.05rem;">Spec Kit is free, open source, and backed by a growing community of 68,000+ developers who believe that better specifications lead to better software.</p>
+    <div class="hero-pills" style="justify-content:center">
+      <a href="https://github.com/github/spec-kit" target="_blank" class="pill" style="text-decoration:none; border-color:var(--accent-blue); color:var(--accent-blue)">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+        GitHub Repo
+      </a>
+      <a href="https://github.github.io/spec-kit/" target="_blank" class="pill" style="text-decoration:none; border-color:var(--accent-green); color:var(--accent-green)">
+        📚 Official Docs
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ ABOUT THE AUTHORS ═══════════ -->
+<section id="authors" style="padding:5rem 1.5rem; max-width:800px; margin:0 auto;">
+  <div class="reveal" style="text-align:center; margin-bottom:3rem;">
+    <span style="font-family:var(--font-accent); font-size:0.85rem; color:var(--accent-gold); letter-spacing:0.15em; text-transform:uppercase;">Meet the Authors</span>
+    <h2 style="font-family:var(--font-display); font-size:2.2rem; margin:0.5rem 0;">About the Authors</h2>
+    <div style="width:40px; height:3px; background:var(--accent-blue); margin:1rem auto;"></div>
+  </div>
+
+  <div class="reveal" style="background:var(--card-bg); border:1px solid var(--border); border-radius:12px; padding:2rem; margin-bottom:2rem; border-left:4px solid var(--accent-blue);">
+    <h3 style="font-family:var(--font-display); font-size:1.4rem; margin:0 0 0.3rem 0;">Albert Tanure</h3>
+    <p style="font-family:var(--font-accent); font-size:0.85rem; color:var(--accent-blue); margin:0 0 1rem 0; font-weight:600;">Cross Solutions Architect at Microsoft · Docker Captain</p>
+    <p style="color:var(--text-secondary); line-height:1.7; margin-bottom:0.8rem;">Albert is a passionate Senior Cloud Solutions Architect at Microsoft, based in the Netherlands, where he lives with his family. Originally from Brazil, he brings a global perspective and a deep commitment to the technical community. With over 20 years of experience in application development, cloud-native technologies, containers, and software architecture, he has established himself as a trusted voice in the industry.</p>
+    <p style="color:var(--text-secondary); line-height:1.7; margin-bottom:1rem;">A former Microsoft MVP for 7 years and current Docker Captain, Albert is driven by a love for technology and sharing knowledge. He actively contributes through lectures, video content on his Code FC YouTube channel, and technical articles. He founded Tanure.io Software Development Agency and is passionate about AI-driven development workflows, exploring how agent-based systems can transform how teams build software.</p>
+    <a href="https://www.linkedin.com/in/albert-tanure/" target="_blank" style="font-family:var(--font-mono); font-size:0.85rem; color:var(--accent-cyan); text-decoration:none;">linkedin.com/in/albert-tanure →</a>
+  </div>
+
+  <div class="reveal" style="background:var(--card-bg); border:1px solid var(--border); border-radius:12px; padding:2rem; border-left:4px solid var(--accent-purple);">
+    <h3 style="font-family:var(--font-display); font-size:1.4rem; margin:0 0 0.3rem 0;">Rodrigo Moreirao</h3>
+    <p style="font-family:var(--font-accent); font-size:0.85rem; color:var(--accent-purple); margin:0 0 1rem 0; font-weight:600;">Cloud Solution Architect at Microsoft · DevSecOps & GitHub Specialist</p>
+    <p style="color:var(--text-secondary); line-height:1.7; margin-bottom:0.8rem;">Rodrigo is a Cloud Solution Architect at Microsoft, based in the Netherlands, where he specializes in cloud-native technologies, containers, and security. With deep expertise in Azure, AKS, GitHub, and DevSecOps practices, he helps organizations modernize their development workflows and adopt secure-by-design approaches to software delivery.</p>
+    <p style="color:var(--text-secondary); line-height:1.7; margin-bottom:1rem;">Passionate about the intersection of cloud infrastructure and developer experience, Rodrigo brings hands-on knowledge of Terraform, network automation, and container orchestration. As co-author of this ebook, he contributed his practical expertise in building modern applications with structured, AI-driven development methodologies — bridging the gap between cloud architecture and day-to-day developer productivity.</p>
+    <a href="https://www.linkedin.com/in/rodrigo-moreirao-059a8120/" target="_blank" style="font-family:var(--font-mono); font-size:0.85rem; color:var(--accent-cyan); text-decoration:none;">linkedin.com/in/rodrigo-moreirao →</a>
+  </div>
+</section>
+
+<!-- ═══════════ FOOTER ═══════════ -->
+<footer class="footer">
+  <p>This ebook is open knowledge. Share freely.<br>
+  2026 Edition · Built with Spec-Driven Development<br>
+  Albert Tanure & Rodrigo Moreirao<br><br>
+  <a href="https://github.com/github/spec-kit" target="_blank">github.com/github/spec-kit</a></p>
+</footer>
+
+<!-- ═══════════ SCRIPTS ═══════════ -->
+<script>
+// Scroll reveal
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+// Nav hide on scroll
+let lastScroll = 0;
+window.addEventListener('scroll', () => {
+  const nav = document.getElementById('nav');
+  const currentScroll = window.scrollY;
+  if (currentScroll > lastScroll && currentScroll > 100) {
+    nav.classList.add('hidden');
+  } else {
+    nav.classList.remove('hidden');
+  }
+  lastScroll = currentScroll;
+}, { passive: true });
+</script>
+</body>
+</html>
