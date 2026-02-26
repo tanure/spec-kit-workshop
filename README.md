@@ -15,7 +15,7 @@
 
 ### The Complete Beginner's Guide to Building Better Software with AI-Powered Specifications
 
-[![Live eBook](https://img.shields.io/badge/📖_Live_eBook-Read_Now-3B82F6?style=for-the-badge)]([https://tanure.github.io/spec-kit-ebook/](https://tanure.github.io/spec-kit-workshop/))
+[![Live eBook](https://img.shields.io/badge/📖_Live_eBook-Read_Now-3B82F6?style=for-the-badge)](https://tanure.github.io/spec-kit-workshop/)
 [![GitHub Pages](https://img.shields.io/badge/Hosted_on-GitHub_Pages-222?style=for-the-badge&logo=github)](https://pages.github.com/)
 [![Spec Kit](https://img.shields.io/badge/GitHub_Spec_Kit-68k+_⭐-FBBF24?style=for-the-badge&logo=github)](https://github.com/github/spec-kit)
 
