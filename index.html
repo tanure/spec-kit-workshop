@@ -446,12 +446,13 @@ a:hover { text-decoration: underline; }
     <h3>Contents</h3>
     <ol class="toc-list">
       <li><a href="#ch1"><span class="toc-num" style="background:var(--accent-red)">01</span><span class="toc-text"><strong>The Problem with Vibe Coding</strong><span>Why unstructured AI coding wastes tokens and produces broken software</span></span></a></li>
-      <li><a href="#ch2"><span class="toc-num" style="background:var(--accent-purple-dim)">02</span><span class="toc-text"><strong>What is Spec-Driven Development?</strong><span>The philosophy of specifications-first AI-assisted development</span></span></a></li>
-      <li><a href="#ch3"><span class="toc-num" style="background:var(--accent-green-dim)">03</span><span class="toc-text"><strong>Introducing GitHub Spec Kit</strong><span>The open-source toolkit, its commands, and project structure</span></span></a></li>
-      <li><a href="#ch4"><span class="toc-num" style="background:var(--accent-orange)">04</span><span class="toc-text"><strong>Setting Up Your Environment</strong><span>Installing VS Code, Copilot, and Spec Kit step by step</span></span></a></li>
-      <li><a href="#ch5"><span class="toc-num" style="background:var(--accent-blue-dim)">05</span><span class="toc-text"><strong>The SDD Workflow Deep Dive</strong><span>Constitution → Specify → Plan → Tasks → Implement explained</span></span></a></li>
-      <li><a href="#ch6"><span class="toc-num" style="background:var(--accent-pink)">06</span><span class="toc-text"><strong>Token Optimization & Best Practices</strong><span>Save money and get better AI output with structured specs</span></span></a></li>
-      <li><a href="#ch7"><span class="toc-num" style="background:var(--accent-cyan)">07</span><span class="toc-text"><strong>Project: Build a HabitTracker</strong><span>Complete walkthrough — every prompt, every command, every decision</span></span></a></li>
+      <li><a href="#ch2"><span class="toc-num" style="background:var(--accent-blue)">02</span><span class="toc-text"><strong>Prompt Engineer</strong><span>How to structure effective prompts using Goal, Context, Instructions, Output, and Persona</span></span></a></li>
+      <li><a href="#ch3"><span class="toc-num" style="background:var(--accent-purple-dim)">03</span><span class="toc-text"><strong>What is Spec-Driven Development?</strong><span>The philosophy of specifications-first AI-assisted development</span></span></a></li>
+      <li><a href="#ch4"><span class="toc-num" style="background:var(--accent-green-dim)">04</span><span class="toc-text"><strong>Introducing GitHub Spec Kit</strong><span>The open-source toolkit, its commands, and project structure</span></span></a></li>
+      <li><a href="#ch5"><span class="toc-num" style="background:var(--accent-orange)">05</span><span class="toc-text"><strong>Setting Up Your Environment</strong><span>Installing VS Code, Copilot, and Spec Kit step by step</span></span></a></li>
+      <li><a href="#ch6"><span class="toc-num" style="background:var(--accent-blue-dim)">06</span><span class="toc-text"><strong>The SDD Workflow Deep Dive</strong><span>Constitution → Specify → Plan → Tasks → Implement explained</span></span></a></li>
+      <li><a href="#ch7"><span class="toc-num" style="background:var(--accent-pink)">07</span><span class="toc-text"><strong>Token Optimization & Best Practices</strong><span>Save money and get better AI output with structured specs</span></span></a></li>
+      <li><a href="#ch8"><span class="toc-num" style="background:var(--accent-cyan)">08</span><span class="toc-text"><strong>Project: Build a HabitTracker</strong><span>Complete walkthrough — every prompt, every command, every decision</span></span></a></li>
     </ol>
   </div>
 </div>
@@ -510,7 +511,59 @@ a:hover { text-decoration: underline; }
 <!-- ═══════════ CHAPTER 2 ═══════════ -->
 <section id="ch2" class="section">
   <div class="chapter-header reveal">
-    <div class="chapter-label" data-color="purple">Chapter 02</div>
+    <div class="chapter-label" data-color="blue">Chapter 02</div>
+    <h2>Prompt Engineer</h2>
+    <p>How to craft effective, structured prompts that give AI the context it needs to deliver the results you want.</p>
+  </div>
+
+  <div class="reveal">
+    <p>Before diving into Spec-Driven Development, it's essential to understand the foundation of effective AI collaboration: <strong>prompt engineering</strong>. A well-structured prompt is the difference between an AI that wanders and one that delivers. Learning to think like a prompt engineer means learning to communicate with precision and purpose.</p>
+    <p>The template below provides a battle-tested structure you can apply to any AI interaction — from a quick code snippet to a full-scale feature specification.</p>
+  </div>
+
+  <h3 class="reveal">The Prompt Engineering Template</h3>
+  <p class="reveal">Use this five-part structure to build prompts that are clear, contextual, and consistently effective:</p>
+
+  <div class="cards reveal">
+    <div class="card">
+      <div class="card-icon">🎯</div>
+      <h4>#Goal</h4>
+      <p>Define what you want to achieve. State the desired outcome clearly and concisely so the AI understands the end result you're aiming for.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🗂️</div>
+      <h4>#Context</h4>
+      <p>Provide the background information the AI needs. Include relevant constraints, existing code, project details, or domain knowledge that shapes the answer.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">📋</div>
+      <h4>#Instructions</h4>
+      <p>Specify exactly how the AI should approach the task. List steps, rules, or requirements the response must follow.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">📄</div>
+      <h4>#Output <em style="font-weight:400;font-size:0.85em">(optional)</em></h4>
+      <p>Describe the format, structure, or length of the expected response — e.g., a JSON object, a numbered list, or a code block in a specific language.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🎭</div>
+      <h4>#Persona <em style="font-weight:400;font-size:0.85em">(optional)</em></h4>
+      <p>Assign the AI a role or expertise level. Framing the AI as a "senior security engineer" or "UX writer" shapes its tone, vocabulary, and perspective.</p>
+    </div>
+  </div>
+
+  <div class="callout tip reveal">
+    <div class="callout-title">💡 Pro Tip</div>
+    <p>Not every prompt needs all five sections. Start with <strong>#Goal</strong> and <strong>#Instructions</strong> for simple tasks. Add <strong>#Context</strong> when the AI lacks background information. Use <strong>#Output</strong> and <strong>#Persona</strong> to fine-tune the style and format of the response.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════ CHAPTER 3 ═══════════ -->
+<section id="ch3" class="section">
+  <div class="chapter-header reveal">
+    <div class="chapter-label" data-color="purple">Chapter 03</div>
     <h2>What is Spec-Driven Development?</h2>
     <p>Specifications become executable, directly generating working implementations rather than just guiding them.</p>
   </div>
@@ -581,10 +634,10 @@ a:hover { text-decoration: underline; }
 
 <div class="divider"></div>
 
-<!-- ═══════════ CHAPTER 3 ═══════════ -->
-<section id="ch3" class="section">
+<!-- ═══════════ CHAPTER 4 ═══════════ -->
+<section id="ch4" class="section">
   <div class="chapter-header reveal">
-    <div class="chapter-label" data-color="green">Chapter 03</div>
+    <div class="chapter-label" data-color="green">Chapter 04</div>
     <h2>Introducing GitHub Spec Kit</h2>
     <p>An open-source toolkit with 68,000+ stars that makes Spec-Driven Development practical and accessible.</p>
   </div>
@@ -678,10 +731,10 @@ a:hover { text-decoration: underline; }
 
 <div class="divider"></div>
 
-<!-- ═══════════ CHAPTER 4 ═══════════ -->
-<section id="ch4" class="section">
+<!-- ═══════════ CHAPTER 5 ═══════════ -->
+<section id="ch5" class="section">
   <div class="chapter-header reveal">
-    <div class="chapter-label" data-color="orange">Chapter 04</div>
+    <div class="chapter-label" data-color="orange">Chapter 05</div>
     <h2>Setting Up Your Environment</h2>
     <p>From zero to a working Spec Kit project in under 10 minutes.</p>
   </div>
@@ -756,10 +809,10 @@ a:hover { text-decoration: underline; }
 
 <div class="divider"></div>
 
-<!-- ═══════════ CHAPTER 5 ═══════════ -->
-<section id="ch5" class="section section-wide">
+<!-- ═══════════ CHAPTER 6 ═══════════ -->
+<section id="ch6" class="section section-wide">
   <div class="chapter-header reveal">
-    <div class="chapter-label" data-color="blue">Chapter 05</div>
+    <div class="chapter-label" data-color="blue">Chapter 06</div>
     <h2>The SDD Workflow Deep Dive</h2>
     <p>A detailed walkthrough of each phase, with examples and best practices for every command.</p>
   </div>
@@ -855,10 +908,10 @@ a:hover { text-decoration: underline; }
 
 <div class="divider"></div>
 
-<!-- ═══════════ CHAPTER 6 ═══════════ -->
-<section id="ch6" class="section">
+<!-- ═══════════ CHAPTER 7 ═══════════ -->
+<section id="ch7" class="section">
   <div class="chapter-header reveal">
-    <div class="chapter-label" data-color="pink">Chapter 06</div>
+    <div class="chapter-label" data-color="pink">Chapter 07</div>
     <h2>Token Optimization & Best Practices</h2>
     <p>How SDD dramatically reduces AI token consumption while producing better output.</p>
   </div>
@@ -935,10 +988,10 @@ a:hover { text-decoration: underline; }
 
 <div class="divider"></div>
 
-<!-- ═══════════ CHAPTER 7: HABITTRACKER ═══════════ -->
-<section id="ch7" class="section section-wide">
+<!-- ═══════════ CHAPTER 8: HABITTRACKER ═══════════ -->
+<section id="ch8" class="section section-wide">
   <div class="chapter-header reveal">
-    <div class="chapter-label" data-color="cyan">Chapter 07</div>
+    <div class="chapter-label" data-color="cyan">Chapter 08</div>
     <h2>Project: Build a HabitTracker</h2>
     <p>A complete, hands-on walkthrough. Every prompt, every command, every decision — building a genuinely useful app.</p>
   </div>
