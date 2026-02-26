@@ -1,0 +1,48 @@
+name: Deploy eBook to GitHub Pages
+
+on:
+  # Runs when gh-pages branch is updated (by you, Copilot, Claude, or any agent)
+  push:
+    branches: ["gh-pages"]
+
+  # Allows manual trigger from the Actions tab
+  workflow_dispatch:
+
+# Sets permissions for GITHUB_TOKEN to allow Pages deployment
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment, skip queued runs (only latest matters)
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Deploy to GitHub Pages
+    runs-on: ubuntu-latest
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout gh-pages branch
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # Upload the root of gh-pages (where index.html lives)
+          path: "."
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
