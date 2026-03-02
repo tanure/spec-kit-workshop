@@ -824,7 +824,12 @@ a:hover { text-decoration: underline; }
       <div class="prompt-label" style="color:var(--accent-blue)">📋 Example Prompt — Constitution</div>
       <div class="prompt-body">
         <span class="prompt-cmd" style="color:var(--accent-blue)">/speckit.constitution</span>
-        Create principles for a modern web application focused on:<br><br>
+        <strong>#Goal</strong><br>
+        Create governing principles for a modern web application.<br><br>
+        <strong>#Context</strong><br>
+        This constitution will guide all code generation and be referenced throughout the project by every agent.<br><br>
+        <strong>#Instructions</strong><br>
+        Define non-negotiable principles for each area below:<br><br>
         <strong>• Code quality:</strong> TypeScript strict mode, no any types, ESLint + Prettier<br>
         <strong>• Testing:</strong> Unit tests with Vitest, integration tests for critical paths, 80% coverage minimum<br>
         <strong>• Accessibility:</strong> WCAG 2.1 AA, semantic HTML, keyboard navigation, screen reader support<br>
@@ -845,7 +850,12 @@ a:hover { text-decoration: underline; }
       <div class="prompt-label" style="color:var(--accent-purple)">📝 Example Prompt — Specification</div>
       <div class="prompt-body">
         <span class="prompt-cmd" style="color:var(--accent-purple)">/speckit.specify</span>
-        Build a habit tracking application where users can create daily habits with custom names and emoji icons, track completion with a simple tap, view current and longest streaks, and see weekly/monthly progress on a visual dashboard. The app should feel motivating and be usable one-handed on mobile.
+        <strong>#Goal</strong><br>
+        Build a habit tracking application that helps users build and maintain positive daily routines.<br><br>
+        <strong>#Context</strong><br>
+        Individual users who want simple, private habit tracking without accounts or internet access. The app must be enjoyable to use every day — especially on mobile.<br><br>
+        <strong>#Instructions</strong><br>
+        Allow users to create daily habits with custom names and emoji icons, track completion with a simple tap, view current and longest streaks, and see weekly/monthly progress on a visual dashboard. The app should feel motivating and be usable one-handed on mobile.
       </div>
     </div>
     <p>The AI will expand this into a full specification with user stories, acceptance criteria, edge cases, and constraints — all stored in <code>specs/001-habit-tracker/spec.md</code>. <strong>Review every section.</strong> This is your most important checkpoint.</p>
@@ -867,6 +877,11 @@ a:hover { text-decoration: underline; }
       <div class="prompt-label" style="color:var(--accent-orange)">🏗️ Example Prompt — Plan</div>
       <div class="prompt-body">
         <span class="prompt-cmd" style="color:var(--accent-orange)">/speckit.plan</span>
+        <strong>#Goal</strong><br>
+        Define the technical architecture and stack choices for the habit tracking application.<br><br>
+        <strong>#Context</strong><br>
+        The spec is finalized. This plan translates product requirements into concrete technical decisions aligned with the constitution.<br><br>
+        <strong>#Instructions</strong><br>
         Use React 18 with TypeScript and Vite for the frontend. Tailwind CSS for styling. Browser localStorage for persistence — no backend needed. React Router v6 for navigation. date-fns for date calculations. framer-motion for completion animations. Keep external dependencies minimal.
       </div>
     </div>
@@ -1123,7 +1138,14 @@ a:hover { text-decoration: underline; }
     <div class="prompt-block">
       <div class="prompt-label" style="color:var(--accent-blue)">📋 Copy this prompt exactly</div>
       <div class="prompt-body"><span class="prompt-cmd" style="color:var(--accent-blue)">/speckit.constitution</span>
-Create a constitution for a daily habit tracking web application with these principles:
+<strong>#Goal</strong>
+Create a constitution for the HabitTracker web application defining non-negotiable development principles.
+
+<strong>#Context</strong>
+This is a mobile-first single-page web app for individual users to track daily habits. The constitution governs every code decision and will be referenced by all subsequent agents throughout the project.
+
+<strong>#Instructions</strong>
+Define clear principles for each area below:
 
 <strong>Code Quality:</strong> React with TypeScript in strict mode. No "any" types. ESLint + Prettier enforced. All components are functional with hooks. Feature-based folder structure (src/features/habits/, src/features/dashboard/, etc.).
 
@@ -1151,7 +1173,14 @@ Create a constitution for a daily habit tracking web application with these prin
     <div class="prompt-block">
       <div class="prompt-label" style="color:var(--accent-purple)">📝 Copy this prompt exactly</div>
       <div class="prompt-body"><span class="prompt-cmd" style="color:var(--accent-purple)">/speckit.specify</span>
-Build a daily habit tracker called "HabitTracker" — a single-page web app that helps users build and maintain positive daily routines through simple tracking and visual progress feedback.
+<strong>#Goal</strong>
+Build a daily habit tracker called "HabitTracker" — a web app that helps users build and maintain positive daily routines through simple tracking and visual progress feedback.
+
+<strong>#Context</strong>
+Individual users who want to build better daily routines without complex tools. No accounts needed — all data stays on the user's device. Must work great on mobile for one-handed use and feel rewarding to use every day.
+
+<strong>#Instructions</strong>
+Describe the full product specification including all user-facing features, behaviors, and experience requirements. Do not include technical implementation details such as frameworks, libraries, or data storage mechanisms.
 
 <strong>== CORE FEATURES ==</strong>
 
@@ -1169,13 +1198,13 @@ A streak is the count of consecutive scheduled days a habit was completed. Missi
 Weekly view: 7-day grid showing completion status per habit (color-coded). Monthly view: Calendar heatmap showing daily overall completion percentage (from gray to green). Statistics: overall completion rate (last 7 / 30 / 90 days), current longest streak across all habits, total habits completed all-time, most consistent habit. Motivational message that changes based on performance.
 
 <strong>5. Starter Habits</strong>
-On first launch (no data in localStorage), offer a set of 6 starter habits the user can select from: 💪 Exercise (daily), 📚 Read 20 min (daily), 💧 Drink 8 glasses of water (daily), 🧘 Meditate (daily), 📝 Journal (daily), 🚶 10,000 steps (weekdays). User can skip and create their own, or select some starters and add custom ones.
+On first launch when the user has no saved habits, offer a set of 6 starter habits the user can select from: 💪 Exercise (daily), 📚 Read 20 min (daily), 💧 Drink 8 glasses of water (daily), 🧘 Meditate (daily), 📝 Journal (daily), 🚶 10,000 steps (weekdays). User can skip and create their own, or select some starters and add custom ones.
 
-<strong>6. Data Layer</strong>
-All data in localStorage. Data model: habits (id, name, emoji, frequency, category, createdAt, order), completions (habitId, date, completedAt), and settings (theme, onboardingComplete). JSON export button downloads all data. JSON import button restores from backup with conflict handling. Data schema version number for future migrations.
+<strong>6. Data Portability</strong>
+All data stays on the user's device — no accounts, no syncing, no privacy concerns. Export data to a backup file. Import data from a backup file with conflict handling.
 
 <strong>== USER EXPERIENCE REQUIREMENTS ==</strong>
-Mobile-first: usable one-handed on a phone. Touch targets minimum 44x44px. Navigation: bottom tab bar with 3 tabs — Today, Stats, Settings. Animations: completion toggle, streak milestone, celebration. Theme: clean, modern, encouraging — not clinical. Default dark mode with light mode toggle. Empty states with helpful messages ("Add your first habit!"). Loading states aren't needed (localStorage is instant) but error states are.</div>
+Mobile-first: usable one-handed on a phone. Touch targets minimum 44x44px. Navigation: bottom tab bar with 3 tabs — Today, Stats, Settings. Animations: completion toggle, streak milestone, celebration. Theme: clean, modern, encouraging — not clinical. Default dark mode with light mode toggle. Empty states with helpful messages ("Add your first habit!"). Loading indicators are not required for instant operations, but error states are required for data import/export operations.</div>
     </div>
   </div>
 
@@ -1213,7 +1242,14 @@ Mobile-first: usable one-handed on a phone. Touch targets minimum 44x44px. Navig
     <div class="prompt-block">
       <div class="prompt-label" style="color:var(--accent-orange)">🏗️ Copy this prompt exactly</div>
       <div class="prompt-body"><span class="prompt-cmd" style="color:var(--accent-orange)">/speckit.plan</span>
-Technical decisions for the HabitTracker implementation:
+<strong>#Goal</strong>
+Define the complete technical architecture for the HabitTracker application.
+
+<strong>#Context</strong>
+The spec and constitution are finalized. This plan translates product requirements and guiding principles into concrete technical decisions that will govern implementation.
+
+<strong>#Instructions</strong>
+Provide technical decisions for each area below:
 
 <strong>Build & Framework:</strong> Vite 5 with React 18 and TypeScript in strict mode. SWC for fast compilation.
 
@@ -1293,15 +1329,29 @@ Task 20: Final polish and responsive testing</span></div>
     <div class="prompt-block">
       <div class="prompt-label" style="color:var(--accent-cyan)">🚀 Launch implementation</div>
       <div class="prompt-body"><span class="prompt-cmd" style="color:var(--accent-cyan)">/speckit.implement</span>
-<span style="color:var(--text-muted)">Copilot will now:
-1. Read the constitution for coding standards
-2. Review the spec for feature requirements
-3. Follow the plan for architecture decisions
-4. Execute each task in order
-5. Generate code, tests, and configuration
-6. Validate against acceptance criteria
+<strong>#Goal</strong>
+Execute all tasks from tasks.md to build the complete HabitTracker application.
 
-⏱️ This will take 10-20 minutes. Let it work uninterrupted.</span></div>
+<strong>#Context</strong>
+All artifacts are finalized and have passed the /speckit.analyze consistency check. The constitution, spec, plan, and tasks are ready.
+
+<strong>#Instructions</strong>
+Implement all tasks from tasks.md in sequence. For each task:
+1. Read the task description and acceptance criteria
+2. Apply constitution principles to all code decisions
+3. Follow the architectural patterns defined in the plan
+4. Generate code, tests, and configuration as specified
+5. Validate the task's acceptance criteria before proceeding to the next
+
+<strong>#Output</strong>
+Working, tested code for each task committed incrementally. Flag any ambiguities or blockers before proceeding.
+
+<span style="color:var(--text-muted)">💡 You can target specific tasks or phases:
+• Implement a single task: /speckit.implement [task number or name]
+• Implement a range:  /speckit.implement Tasks 1 to 5
+• Implement all tasks: /speckit.implement (no argument)
+
+⏱️ Full build will take 10–20 minutes. Let it work uninterrupted.</span></div>
     </div>
   </div>
 
