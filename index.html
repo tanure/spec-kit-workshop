@@ -1523,7 +1523,11 @@ const formatPromptText = (text) => {
         return;
       }
 
-      const startsNewSection = /^(\/speckit\.|#|==|\d+\.|•\s|[A-Za-z][A-Za-z0-9\s/&()'"+-]{1,40}:)/.test(trimmed);
+      const isSlashCommand = /^\/speckit\./.test(trimmed);
+      const isMarkdownHeading = /^(#|==|\d+\.)/.test(trimmed);
+      const isBulletHeading = /^•\s/.test(trimmed);
+      const isColonHeading = /^[A-Z][A-Za-z]+(?: [A-Za-z&/-]+){0,3}:/.test(trimmed);
+      const startsNewSection = isSlashCommand || isMarkdownHeading || isBulletHeading || isColonHeading;
       if (startsNewSection && formattedLines.length && formattedLines[formattedLines.length - 1] !== '') {
         formattedLines.push('');
       }
