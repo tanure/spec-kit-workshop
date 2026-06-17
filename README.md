@@ -19,7 +19,7 @@
 [![GitHub Pages](https://img.shields.io/badge/Hosted_on-GitHub_Pages-222?style=for-the-badge&logo=github)](https://pages.github.com/)
 [![Spec Kit](https://img.shields.io/badge/GitHub_Spec_Kit-68k+_⭐-FBBF24?style=for-the-badge&logo=github)](https://github.com/github/spec-kit)
 
-[![eBook Version](https://img.shields.io/badge/eBook_Version-v2.0-3FB950?style=for-the-badge)](https://tanure.github.io/spec-kit-workshop/) &nbsp; _Updated: pending build_
+[![eBook Version](https://img.shields.io/badge/eBook_Version-v2.0.32-3FB950?style=for-the-badge)](https://tanure.github.io/spec-kit-workshop/) &nbsp; _Updated: 2026-06-17 13:06 UTC_
 
 <br>
 
