@@ -449,21 +449,29 @@ a:hover { text-decoration: underline; }
   display: flex; align-items: center; justify-content: flex-end; gap: 1rem;
   font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted);
 }
-.version-tag {
+.version-meta {
+  display: flex; align-items: center; gap: 0.5rem;
+}
+.version-tag,
+.last-updated-tag {
   display: inline-flex; align-items: center; gap: 0.4rem;
   background: var(--bg-overlay); border: 1px solid var(--border);
   border-radius: 4px; padding: 0.15rem 0.5rem;
+}
+.version-tag {
   color: var(--accent-green); font-weight: 700;
 }
-.version-bar .last-updated { color: var(--text-muted); }
+.last-updated-tag { color: var(--text-secondary); }
 </style>
 </head>
 <body>
 
 <!-- ═══════════ VERSION BAR ═══════════ -->
 <div class="version-bar">
-  <span class="version-tag">v2.0</span>
-  <span class="last-updated">Last updated: <span id="last-updated">latest build</span></span>
+  <div class="version-meta">
+    <span class="version-tag">v2.0</span>
+    <span class="last-updated-tag">Updated <span id="last-updated">latest build</span></span>
+  </div>
 </div>
 
 <!-- ═══════════ NAV ═══════════ -->
