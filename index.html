@@ -1506,6 +1506,8 @@ const revealObserver = new IntersectionObserver((entries) => {
 document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
 const formatPromptText = (text) => {
+  const headingWordPattern = /^[A-Za-z]+$/;
+  const headingSeparatorPattern = /[-&/]/g;
   const formattedLines = [];
 
   text
@@ -1523,7 +1525,18 @@ const formatPromptText = (text) => {
         return;
       }
 
-      const startsNewSection = /^(#|==|\d+\.)/.test(trimmed);
+      const isSlashCommand = /^\/speckit\./.test(trimmed);
+      const isMarkdownHeading = /^(#|==|\d+\.)/.test(trimmed);
+      const isBulletHeading = /^•\s/.test(trimmed);
+      const colonIndex = trimmed.indexOf(':');
+      const headingText = colonIndex > 0 ? trimmed.slice(0, colonIndex).trim() : '';
+      const headingWords = headingText.replace(headingSeparatorPattern, ' ').split(/\s+/).filter(Boolean);
+      const isColonHeading = Boolean(headingText)
+        && /^[A-Z]/.test(headingText)
+        && headingWords.length > 0
+        && headingWords.length <= 4
+        && headingWords.every(word => headingWordPattern.test(word));
+      const startsNewSection = isSlashCommand || isMarkdownHeading || isBulletHeading || isColonHeading;
       if (startsNewSection && formattedLines.length && formattedLines[formattedLines.length - 1] !== '') {
         formattedLines.push('');
       }
