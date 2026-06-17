@@ -19,6 +19,8 @@
 [![GitHub Pages](https://img.shields.io/badge/Hosted_on-GitHub_Pages-222?style=for-the-badge&logo=github)](https://pages.github.com/)
 [![Spec Kit](https://img.shields.io/badge/GitHub_Spec_Kit-68k+_⭐-FBBF24?style=for-the-badge&logo=github)](https://github.com/github/spec-kit)
 
+<!-- ebook-version --> [![eBook Version](https://img.shields.io/badge/eBook_Version-v2.0-3FB950?style=for-the-badge)](https://tanure.github.io/spec-kit-workshop/) _Updated: pending build_
+
 <br>
 
 <img src="https://img.shields.io/badge/VS_Code-007ACC?style=flat-square&logo=visual-studio-code&logoColor=white" alt="VS Code">
