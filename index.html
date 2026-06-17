@@ -463,7 +463,7 @@ a:hover { text-decoration: underline; }
 <!-- ═══════════ VERSION BAR ═══════════ -->
 <div class="version-bar">
   <span class="version-tag">v2.0</span>
-  <span class="last-updated">Last updated: <span id="last-updated">BUILD_DATETIME</span></span>
+  <span class="last-updated">Last updated: <span id="last-updated">latest build</span></span>
 </div>
 
 <!-- ═══════════ NAV ═══════════ -->
@@ -850,12 +850,13 @@ a:hover { text-decoration: underline; }
         <div class="code-block">
           <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Terminal</span></div>
           <div class="code-body"><span class="cm"># Install Spec Kit globally (recommended — one-time setup)</span>
-<span class="cm"># Replace vX.Y.Z with the latest version from github.com/github/spec-kit/releases</span>
+<span class="cm"># Get the latest version tag from: github.com/github/spec-kit/releases</span>
 <span class="cmd">uv</span> tool install specify-cli <span class="flag">--from</span> git+https://github.com/github/spec-kit.git@vX.Y.Z
 
 <span class="cm"># Check for updates or upgrade to the latest stable release</span>
 <span class="cmd">specify</span> self upgrade</div>
         </div>
+        <p style="font-size:0.82rem; color:var(--text-muted); margin-top:0.5rem">Find the latest release tag at <a href="https://github.com/github/spec-kit/releases" target="_blank">github.com/github/spec-kit/releases</a></p>
       </div>
     </div>
     <div class="step-item">

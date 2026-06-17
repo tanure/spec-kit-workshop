@@ -36,7 +36,7 @@ jobs:
       - name: Inject build datetime into version badge
         run: |
           BUILD_DATETIME=$(date -u '+%Y-%m-%d %H:%M UTC')
-          sed -i "s|BUILD_DATETIME|${BUILD_DATETIME}|g" index.html
+          sed -i "s|latest build|${BUILD_DATETIME}|g" index.html
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
