@@ -1533,6 +1533,8 @@ const formatPromptText = (text) => {
       const headingWords = headingText.replace(headingSeparatorPattern, ' ').split(/\s+/).filter(Boolean);
       const isColonHeading = Boolean(headingText)
         && /^[A-Z]/.test(headingText)
+        && headingWords.length > 0
+        && headingWords.length <= 4
         && headingWords.every(word => headingWordPattern.test(word));
       const startsNewSection = isSlashCommand || isMarkdownHeading || isBulletHeading || isColonHeading;
       if (startsNewSection && formattedLines.length && formattedLines[formattedLines.length - 1] !== '') {
