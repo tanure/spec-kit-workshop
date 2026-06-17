@@ -1528,9 +1528,9 @@ const formatPromptText = (text) => {
       const isSlashCommand = /^\/speckit\./.test(trimmed);
       const isMarkdownHeading = /^(#|==|\d+\.)/.test(trimmed);
       const isBulletHeading = /^•\s/.test(trimmed);
-      const colonIndex = trimmed.includes(':') ? trimmed.indexOf(':') : -1;
+      const colonIndex = trimmed.indexOf(':');
       const headingText = colonIndex > 0 ? trimmed.slice(0, colonIndex).trim() : '';
-      const headingWords = headingText.replace(/[&/\-]/g, ' ').split(/\s+/).filter(Boolean);
+      const headingWords = headingText.replace(/[-&/]/g, ' ').split(/\s+/).filter(Boolean);
       const isColonHeading = Boolean(headingText)
         && /^[A-Z]/.test(headingText)
         && headingWords.every(word => HEADING_WORD_PATTERN.test(word));
