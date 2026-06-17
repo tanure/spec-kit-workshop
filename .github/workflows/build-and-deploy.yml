@@ -1,0 +1,51 @@
+name: Build and Deploy eBook
+
+on:
+  push:
+    branches: ["main"]
+
+  # Allows manual trigger from the Actions tab
+  workflow_dispatch:
+
+# Sets permissions for GITHUB_TOKEN to allow Pages deployment and pushing to gh-pages
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    name: Build and Deploy to GitHub Pages
+    runs-on: ubuntu-latest
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout main branch
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Inject build datetime into version badge
+        run: |
+          BUILD_DATETIME=$(date -u '+%Y-%m-%d %H:%M UTC')
+          sed -i "s|BUILD_DATETIME|${BUILD_DATETIME}|g" index.html
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "."
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

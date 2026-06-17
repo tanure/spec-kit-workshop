@@ -44,12 +44,13 @@ Whether you're a beginner or experienced developer, this guide walks you through
 | Chapter | Topic | What You'll Learn |
 |---------|-------|-------------------|
 | **01** | The Problem with Vibe Coding | Why unstructured AI coding fails at scale |
-| **02** | What is Spec-Driven Development? | The four pillars and philosophy of SDD |
-| **03** | Introducing GitHub Spec Kit | The 7 slash commands and project structure |
-| **04** | Setting Up Your Environment | From zero to working project in 10 minutes |
-| **05** | The SDD Workflow Deep Dive | Each phase with examples and best practices |
-| **06** | Token Optimization | How SDD reduces AI token consumption by ~60% |
-| **07** | Project: Build a HabitTracker | Complete hands-on build with every prompt |
+| **02** | Prompt Engineer | How to structure effective prompts for AI |
+| **03** | What is Spec-Driven Development? | The four pillars and philosophy of SDD |
+| **04** | Introducing GitHub Spec Kit | The slash commands (core + optional) and project structure |
+| **05** | Setting Up Your Environment | From zero to working project in 10 minutes |
+| **06** | The SDD Workflow Deep Dive | Each phase with examples and best practices |
+| **07** | Token Optimization & Best Practices | How SDD reduces AI token consumption by ~60% |
+| **08** | Project: Build a HabitTracker | Complete hands-on build with every prompt |
 
 Plus an **Appendix** with slash commands quick reference and an **About the Authors** section.
 
