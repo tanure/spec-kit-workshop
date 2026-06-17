@@ -1526,7 +1526,11 @@ const formatPromptText = (text) => {
       const isSlashCommand = /^\/speckit\./.test(trimmed);
       const isMarkdownHeading = /^(#|==|\d+\.)/.test(trimmed);
       const isBulletHeading = /^•\s/.test(trimmed);
-      const isColonHeading = /^[A-Z][A-Za-z]+(?: [A-Za-z&/-]+){0,3}:/.test(trimmed);
+      const colonIndex = trimmed.indexOf(':');
+      const headingText = colonIndex > 0 ? trimmed.slice(0, colonIndex).trim() : '';
+      const isColonHeading = Boolean(headingText)
+        && /^[A-Z]/.test(headingText)
+        && /^[A-Za-z][A-Za-z&/\-\s]*$/.test(headingText);
       const startsNewSection = isSlashCommand || isMarkdownHeading || isBulletHeading || isColonHeading;
       if (startsNewSection && formattedLines.length && formattedLines[formattedLines.length - 1] !== '') {
         formattedLines.push('');
