@@ -59,8 +59,8 @@ jobs:
         run: |
           VERSION="${{ steps.version.outputs.version }}"
           BUILD_DATETIME="${{ steps.version.outputs.datetime }}"
-          # Replace everything after the marker on the version line
-          sed -i -E "s|(<!-- ebook-version -->).*|\1 [![eBook Version](https://img.shields.io/badge/eBook_Version-${VERSION}-3FB950?style=for-the-badge)](https://tanure.github.io/spec-kit-workshop/) _Updated: ${BUILD_DATETIME}_|" README.md
+          # Replace the whole eBook Version badge line (identified by its shields.io URL)
+          sed -i -E "s|^\[!\[eBook Version\].*|[![eBook Version](https://img.shields.io/badge/eBook_Version-${VERSION}-3FB950?style=for-the-badge)](https://tanure.github.io/spec-kit-workshop/) \&nbsp; _Updated: ${BUILD_DATETIME}_|" README.md
           if git diff --quiet README.md; then
             echo "README already up to date."
           else
