@@ -54,7 +54,7 @@ body {
 
 /* ── NAV ── */
 .nav {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  position: fixed; top: 28px; left: 0; right: 0; z-index: 100;
   background: rgba(10, 12, 16, 0.85);
   backdrop-filter: blur(20px) saturate(180%);
   border-bottom: 1px solid var(--border-subtle);
@@ -440,9 +440,31 @@ a:hover { text-decoration: underline; }
 /* ── SCROLL ANIMATIONS ── */
 .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.8s var(--ease-out-expo), transform 0.8s var(--ease-out-expo); }
 .reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* ── VERSION BADGE ── */
+.version-bar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  background: var(--bg-elevated); border-bottom: 1px solid var(--border-subtle);
+  padding: 0.35rem 2rem;
+  display: flex; align-items: center; justify-content: flex-end; gap: 1rem;
+  font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted);
+}
+.version-tag {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  background: var(--bg-overlay); border: 1px solid var(--border);
+  border-radius: 4px; padding: 0.15rem 0.5rem;
+  color: var(--accent-green); font-weight: 700;
+}
+.version-bar .last-updated { color: var(--text-muted); }
 </style>
 </head>
 <body>
+
+<!-- ═══════════ VERSION BAR ═══════════ -->
+<div class="version-bar">
+  <span class="version-tag">v2.0</span>
+  <span class="last-updated">Last updated: <span id="last-updated">latest build</span></span>
+</div>
 
 <!-- ═══════════ NAV ═══════════ -->
 <nav class="nav" id="nav">
@@ -679,9 +701,10 @@ a:hover { text-decoration: underline; }
     <p>GitHub Spec Kit is the open-source toolkit that provides structure, templates, and workflow automation for SDD. It works seamlessly with VS Code, GitHub Copilot, and 15+ other AI coding agents. Install once, use on every project.</p>
   </div>
 
-  <h3 class="reveal">The Seven Slash Commands</h3>
-  <p class="reveal">After initializing Spec Kit in your project, these slash commands become available in your AI assistant's chat. Each one represents a key stage in the SDD workflow:</p>
+  <h3 class="reveal">The Slash Commands</h3>
+  <p class="reveal">After initializing Spec Kit in your project, these slash commands become available in your AI assistant's chat. Spec Kit has six core workflow commands plus three optional enhancement commands:</p>
 
+  <h4 class="reveal" style="margin-top:1.5rem; color:var(--text-secondary); font-size:0.85rem; text-transform:uppercase; letter-spacing:0.1em;">Core Commands</h4>
   <div class="steps reveal">
     <div class="step-item">
       <div class="step-num" style="background:var(--accent-blue-dim)">1</div>
@@ -698,38 +721,56 @@ a:hover { text-decoration: underline; }
       </div>
     </div>
     <div class="step-item">
-      <div class="step-num" style="background:var(--accent-green-dim)">3</div>
-      <div>
-        <h4><code>/speckit.clarify</code></h4>
-        <p>Asks structured, sequential questions to resolve ambiguities. Catches gaps before they become expensive bugs. <strong>Optional but strongly recommended.</strong></p>
-      </div>
-    </div>
-    <div class="step-item">
-      <div class="step-num" style="background:var(--accent-orange)">4</div>
+      <div class="step-num" style="background:var(--accent-orange)">3</div>
       <div>
         <h4><code>/speckit.plan</code></h4>
         <p>Generates a technical implementation plan — architecture, dependencies, data models. You provide tech stack choices. <strong>Run after spec is finalized.</strong></p>
       </div>
     </div>
     <div class="step-item">
-      <div class="step-num" style="background:rgba(102,57,186,0.9)">5</div>
-      <div>
-        <h4><code>/speckit.analyze</code></h4>
-        <p>Cross-artifact consistency check. Validates that constitution, spec, plan, and tasks all align. Flags CRITICAL findings. <strong>Quality gate before implementation.</strong></p>
-      </div>
-    </div>
-    <div class="step-item">
-      <div class="step-num" style="background:var(--accent-red)">6</div>
+      <div class="step-num" style="background:var(--accent-red)">4</div>
       <div>
         <h4><code>/speckit.tasks</code></h4>
         <p>Breaks the plan into ordered, executable tasks with clear dependencies and acceptance criteria. Each task is focused and manageable. <strong>Run after plan is ready.</strong></p>
       </div>
     </div>
     <div class="step-item">
-      <div class="step-num" style="background:var(--accent-cyan)">7</div>
+      <div class="step-num" style="background:var(--accent-pink)">5</div>
+      <div>
+        <h4><code>/speckit.taskstoissues</code></h4>
+        <p>Converts your generated task list into GitHub Issues for team tracking and execution. Links implementation tasks directly to your project board. <strong>Optional — great for team projects.</strong></p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num" style="background:var(--accent-cyan)">6</div>
       <div>
         <h4><code>/speckit.implement</code></h4>
         <p>Executes all tasks to generate working code, tests, and configuration. The AI references every artifact you've built. <strong>Run when everything is approved.</strong></p>
+      </div>
+    </div>
+  </div>
+
+  <h4 class="reveal" style="margin-top:2rem; color:var(--text-secondary); font-size:0.85rem; text-transform:uppercase; letter-spacing:0.1em;">Optional Enhancement Commands</h4>
+  <div class="steps reveal">
+    <div class="step-item">
+      <div class="step-num" style="background:var(--accent-green-dim)">+</div>
+      <div>
+        <h4><code>/speckit.clarify</code></h4>
+        <p>Asks structured, sequential questions to resolve ambiguities before planning. Catches gaps before they become expensive bugs. <strong>Run after specify, before plan.</strong></p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num" style="background:rgba(102,57,186,0.9)">+</div>
+      <div>
+        <h4><code>/speckit.analyze</code></h4>
+        <p>Cross-artifact consistency check. Validates that constitution, spec, plan, and tasks all align. Flags CRITICAL findings. <strong>Run after tasks, before implement.</strong></p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num" style="background:var(--accent-gold)">+</div>
+      <div>
+        <h4><code>/speckit.checklist</code></h4>
+        <p>Generates custom quality checklists that validate requirements completeness, clarity, and consistency — like "unit tests for English". Helps catch vague or conflicting requirements early. <strong>Use at any stage.</strong></p>
       </div>
     </div>
   </div>
@@ -809,14 +850,13 @@ a:hover { text-decoration: underline; }
         <div class="code-block">
           <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Terminal</span></div>
           <div class="code-body"><span class="cm"># Install Spec Kit globally (recommended — one-time setup)</span>
-<span class="cmd">uv</span> tool install specify-cli <span class="flag">--from</span> git+https://github.com/github/spec-kit.git
+<span class="cm"># Get the latest version tag from: github.com/github/spec-kit/releases</span>
+<span class="cmd">uv</span> tool install specify-cli <span class="flag">--from</span> git+https://github.com/github/spec-kit.git@vX.Y.Z
 
-<span class="cm"># Verify the installation</span>
-<span class="cmd">specify</span> <span class="flag">--version</span>
-
-<span class="cm"># Check your system has everything Spec Kit needs</span>
-<span class="cmd">specify</span> check</div>
+<span class="cm"># Check for updates or upgrade to the latest stable release</span>
+<span class="cmd">specify</span> self upgrade</div>
         </div>
+        <p style="font-size:0.82rem; color:var(--text-muted); margin-top:0.5rem">Find the latest release tag at <a href="https://github.com/github/spec-kit/releases" target="_blank">github.com/github/spec-kit/releases</a></p>
       </div>
     </div>
     <div class="step-item">
@@ -826,14 +866,14 @@ a:hover { text-decoration: underline; }
         <div class="code-block">
           <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Terminal</span></div>
           <div class="code-body"><span class="cm"># Create a new project configured for GitHub Copilot</span>
-<span class="cmd">specify</span> init my-project <span class="flag">--ai</span> copilot
+<span class="cmd">specify</span> init my-project <span class="flag">--integration</span> copilot
 
 <span class="cm"># Open it in VS Code</span>
 <span class="cmd">code</span> my-project</div>
         </div>
         <div class="callout warn" style="margin-top:1rem">
           <div class="callout-title">⚠️ Important</div>
-          <p>When VS Code opens, switch Copilot to <strong>Agent Mode</strong> in the chat panel. Type <code>/speckit</code> and you should see all 7 commands in the autocomplete. If they don't appear, restart VS Code.</p>
+          <p>When VS Code opens, switch Copilot to <strong>Agent Mode</strong> in the chat panel. Type <code>/speckit</code> and you should see all the commands in the autocomplete. If they don't appear, restart VS Code.</p>
         </div>
       </div>
     </div>
@@ -920,9 +960,9 @@ a:hover { text-decoration: underline; }
     </div>
   </div>
 
-  <h3 class="reveal">Phase 5 — Analysis & Tasks</h3>
+  <h3 class="reveal">Phase 5 — Tasks & Analysis</h3>
   <div class="reveal">
-    <p>Run <code>/speckit.analyze</code> to validate everything aligns, then <code>/speckit.tasks</code> to generate ordered, actionable work items. Each task is small enough for reliable AI execution, with clear dependencies and acceptance criteria.</p>
+    <p>Run <code>/speckit.tasks</code> to generate ordered, actionable work items from your plan. Each task is small enough for reliable AI execution, with clear dependencies and acceptance criteria. Then run <code>/speckit.analyze</code> as your quality gate — it cross-validates that all artifacts (constitution, spec, plan, and tasks) are consistent and catches any CRITICAL misalignments before a single line of code is written.</p>
   </div>
 
   <h3 class="reveal">Phase 6 — Implementation</h3>
@@ -947,6 +987,7 @@ a:hover { text-decoration: underline; }
           <li>/speckit.specify (5 min)</li>
           <li>/speckit.plan (5 min)</li>
           <li>/speckit.tasks (2 min)</li>
+          <li>/speckit.analyze (2 min)</li>
           <li>/speckit.implement (automated)</li>
         </ul>
       </div>
@@ -1008,8 +1049,8 @@ a:hover { text-decoration: underline; }
       <p>5 minutes answering /speckit.clarify questions saves hours of "no, that's not what I meant" debugging loops.</p>
     </div>
     <div class="card">
-      <h4>5. Run /speckit.analyze</h4>
-      <p>The analysis command is your quality gate. It catches misalignments before a single line of code is written.</p>
+      <h4>5. Run /speckit.analyze After Tasks</h4>
+      <p>The analysis command is your quality gate — run it after /speckit.tasks, before /speckit.implement. It catches misalignments before a single line of code is written.</p>
     </div>
     <div class="card">
       <h4>6. One Feature Per Spec</h4>
@@ -1151,7 +1192,7 @@ a:hover { text-decoration: underline; }
     <div class="code-block">
       <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">Terminal</span></div>
       <div class="code-body"><span class="cm"># Create the HabitTracker project with Copilot support</span>
-<span class="cmd">specify</span> init habit-tracker <span class="flag">--ai</span> copilot
+<span class="cmd">specify</span> init habit-tracker <span class="flag">--integration</span> copilot
 
 <span class="cm"># Open in VS Code</span>
 <span class="cmd">code</span> habit-tracker
@@ -1303,27 +1344,7 @@ Provide technical decisions for each area below:
   </div>
 
   <div class="reveal">
-    <h4>Step 6 — Analyze for Consistency</h4>
-    <p>Before generating tasks, run the quality gate:</p>
-    <div class="prompt-block">
-      <div class="prompt-label" style="color:rgba(102,57,186,0.9)">🔍 Consistency check</div>
-      <div class="prompt-body"><span class="prompt-cmd" style="color:var(--accent-purple)">/speckit.analyze</span>
-<span style="color:var(--text-muted)">The AI will check:
-• Spec alignment with constitution (testing, accessibility, etc.)
-• Plan consistency with spec requirements (are all features covered?)
-• Conflicts between principles and technical choices
-• Coverage gaps
-
-Fix any CRITICAL findings before proceeding!</span></div>
-    </div>
-    <div class="callout danger">
-      <div class="callout-title">🚨 Don't Skip This</div>
-      <p>If the analysis finds CRITICAL issues (e.g., "spec requires drag-and-drop but plan doesn't include a DnD library"), fix them in the spec or plan <em>before</em> generating tasks. This is the cheapest place to catch mistakes — before any code exists.</p>
-    </div>
-  </div>
-
-  <div class="reveal">
-    <h4>Step 7 — Generate Tasks</h4>
+    <h4>Step 6 — Generate Tasks</h4>
     <div class="prompt-block">
       <div class="prompt-label" style="color:var(--accent-red)">📋 Task generation</div>
       <div class="prompt-body"><span class="prompt-cmd" style="color:var(--accent-red)">/speckit.tasks</span>
@@ -1352,7 +1373,27 @@ Task 20: Final polish and responsive testing</span></div>
     </div>
     <div class="callout tip">
       <div class="callout-title">💡 Review the Tasks</div>
-      <p>Open <code>specs/001-habit-tracker/tasks.md</code> and review the generated tasks. Are they in the right order? Are dependencies clear? Are acceptance criteria specific? This is your last chance to adjust before implementation begins.</p>
+      <p>Open <code>specs/001-habit-tracker/tasks.md</code> and review the generated tasks. Are they in the right order? Are dependencies clear? Are acceptance criteria specific? This is your last chance to adjust before running the analysis and implementation.</p>
+    </div>
+  </div>
+
+  <div class="reveal">
+    <h4>Step 7 — Analyze for Consistency</h4>
+    <p>Run the quality gate after tasks are generated:</p>
+    <div class="prompt-block">
+      <div class="prompt-label" style="color:rgba(102,57,186,0.9)">🔍 Consistency check</div>
+      <div class="prompt-body"><span class="prompt-cmd" style="color:var(--accent-purple)">/speckit.analyze</span>
+<span style="color:var(--text-muted)">The AI will check:
+• Spec alignment with constitution (testing, accessibility, etc.)
+• Plan consistency with spec requirements (are all features covered?)
+• Task coverage — do the tasks implement everything in the plan?
+• Conflicts between principles and technical choices
+
+Fix any CRITICAL findings before proceeding!</span></div>
+    </div>
+    <div class="callout danger">
+      <div class="callout-title">🚨 Don't Skip This</div>
+      <p>If the analysis finds CRITICAL issues (e.g., "spec requires drag-and-drop but plan doesn't include a DnD library"), fix them in the spec, plan, or tasks <em>before</em> implementing. This is the cheapest place to catch mistakes — before any code exists.</p>
     </div>
   </div>
 
